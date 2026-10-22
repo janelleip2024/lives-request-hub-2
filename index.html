@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<title>Lives Request Hub</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: top bar with "viewing as" switcher; left rail of views; work column. Request detail = conversation | status + audit. */
+:root {
+  --bg: #eef2f0; --surface: #ffffff; --sunken: #e4eae7; --line: #d3dbd7;
+  --fg: #13201c; --muted: #586964;
+  --accent: #0b6b5a; --accent-fg: #ffffff; --accent-soft: #d6ede6;
+  --ext: #6d47a8; --ext-soft: #eee6f8;
+  --warn: #9a5a06; --warn-soft: #fbeed6; --bad: #b3261e; --bad-soft: #fbe2df; --ok: #1d7a3d; --ok-soft: #dff1e5;
+  --font-ui: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 8px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e1412; --surface: #151d1a; --sunken: #1c2622; --line: #2a3632;
+  --fg: #e3ebe8; --muted: #93a39e;
+  --accent: #46c4a3; --accent-fg: #052219; --accent-soft: #163a31;
+  --ext: #b896ea; --ext-soft: #2a2140;
+  --warn: #e6a74c; --warn-soft: #3a2b13; --bad: #f0897f; --bad-soft: #3d1c19; --ok: #72d093; --ok-soft: #163222;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0e1412; --surface: #151d1a; --sunken: #1c2622; --line: #2a3632;
+  --fg: #e3ebe8; --muted: #93a39e;
+  --accent: #46c4a3; --accent-fg: #052219; --accent-soft: #163a31;
+  --ext: #b896ea; --ext-soft: #2a2140;
+  --warn: #e6a74c; --warn-soft: #3a2b13; --bad: #f0897f; --bad-soft: #3d1c19; --ok: #72d093; --ok-soft: #163222;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-ui); font-size: 14px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 16px;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mono { font-family: var(--font-mono); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.25; }
+h2 { font-size: 20px; font-weight: 600; }
+h3 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+
+.app { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 16px 24px; }
+.top { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 10px; margin-right: auto; }
+.mark { width: 30px; height: 30px; border-radius: 7px; background: var(--accent); color: var(--accent-fg); display: grid; place-items: center; font-weight: 700; font-size: 13px; letter-spacing: -.02em; }
+.brand b { font-size: 16px; display: block; line-height: 1.2; }
+.brand span { font-size: 12px; color: var(--muted); }
+.as { display: flex; align-items: center; gap: 8px; }
+.as label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+select, input[type=text], textarea { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 7px 10px; min-width: 0; }
+textarea { width: 100%; resize: vertical; min-height: 64px; }
+.as select { max-width: 320px; }
+
+.rail { display: flex; flex-direction: column; gap: 2px; }
+.rail button { text-align: left; background: none; border: 0; border-radius: 6px; padding: 8px 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-weight: 500; }
+.rail button:hover { background: var(--sunken); color: var(--fg); }
+.rail button[aria-current=true] { background: var(--accent-soft); color: var(--fg); }
+.rail .count { font-size: 11px; font-weight: 600; background: var(--accent); color: var(--accent-fg); border-radius: 10px; padding: 0 7px; }
+.rail .sep { height: 1px; background: var(--line); margin: 8px 0; }
+.rail .note { font-size: 12px; color: var(--muted); padding: 4px 10px; }
+.who { margin-top: 14px; padding: 12px; border-radius: var(--r); background: var(--sunken); font-size: 12.5px; }
+.who b { display: block; font-size: 13.5px; }
+
+main { min-width: 0; display: flex; flex-direction: column; gap: 18px; padding-bottom: 40px; }
+.head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px; }
+.head p { margin: 4px 0 0; color: var(--muted); max-width: 70ch; }
+
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 7px 12px; cursor: pointer; font-weight: 500; white-space: nowrap; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.danger { color: var(--bad); }
+.btn.small { padding: 3px 8px; font-size: 12.5px; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.linkish { align-self: flex-start; background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.section { display: flex; flex-direction: column; gap: 10px; }
+
+.pill { display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; padding: 1px 9px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.p-open { background: var(--accent-soft); color: var(--accent); }
+.p-info { background: var(--warn-soft); color: var(--warn); }
+.p-done { background: var(--ok-soft); color: var(--ok); }
+.p-bad { background: var(--bad-soft); color: var(--bad); }
+.tag { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 4px; background: var(--sunken); color: var(--muted); white-space: nowrap; }
+.tag.ext { background: var(--ext-soft); color: var(--ext); }
+.tag.po { background: var(--accent-soft); color: var(--accent); }
+.tag.warn { background: var(--warn-soft); color: var(--warn); }
+
+.list { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); overflow: hidden; }
+.row { display: grid; grid-template-columns: 92px minmax(0, 1fr) auto; gap: 4px 14px; padding: 12px 14px; border-top: 1px solid var(--line); cursor: pointer; background: none; border-left: 0; border-right: 0; border-bottom: 0; text-align: left; width: 100%; align-items: start; }
+.row:first-child { border-top: 0; }
+.row:hover { background: var(--sunken); }
+.row .t { font-weight: 600; overflow-wrap: anywhere; }
+.row .meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12.5px; color: var(--muted); margin-top: 3px; }
+.row .right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 12px; color: var(--muted); }
+.empty { padding: 22px; text-align: center; color: var(--muted); background: var(--surface); border: 1px dashed var(--line); border-radius: var(--r); }
+
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; }
+.stat b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.stat span { font-size: 12px; color: var(--muted); }
+
+.detail { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; align-items: start; }
+.fields { display: grid; grid-template-columns: minmax(110px, 38%) minmax(0, 1fr); gap: 8px 14px; margin: 0; }
+.fields dt { color: var(--muted); font-size: 13px; }
+.fields dd { margin: 0; overflow-wrap: anywhere; }
+.masked { font-family: var(--font-mono); letter-spacing: .1em; color: var(--muted); }
+.lock { font-size: 11px; color: var(--warn); font-weight: 600; margin-left: 6px; }
+
+.thread { display: flex; flex-direction: column; gap: 10px; }
+.msg { border-radius: var(--r); padding: 10px 12px; background: var(--sunken); border: 1px solid transparent; }
+.msg.shared { background: var(--ext-soft); }
+.msg.system { background: none; border: 1px dashed var(--line); color: var(--muted); font-size: 13px; }
+.msg .by { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; font-size: 12.5px; margin-bottom: 3px; }
+.msg .by b { font-size: 13px; }
+.msg p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.composer { display: flex; flex-direction: column; gap: 8px; }
+.composer .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.seg button { border: 0; background: var(--surface); padding: 5px 10px; cursor: pointer; font-size: 12.5px; }
+.seg button[aria-pressed=true] { background: var(--fg); color: var(--bg); }
+
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.steps li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; position: relative; padding-bottom: 14px; }
+.steps li:not(:last-child)::after { content: ""; position: absolute; left: 10px; top: 22px; bottom: 0; width: 2px; background: var(--line); }
+.dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line); background: var(--surface); display: grid; place-items: center; font-size: 11px; font-weight: 700; z-index: 1; }
+.s-done .dot { background: var(--ok); border-color: var(--ok); color: var(--surface); }
+.s-current .dot { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.s-info .dot { border-color: var(--warn); box-shadow: 0 0 0 4px var(--warn-soft); }
+.s-bad .dot { background: var(--bad); border-color: var(--bad); color: var(--surface); }
+.steps .lbl { font-weight: 600; }
+.steps .sub { font-size: 12.5px; color: var(--muted); }
+
+.decide { border: 1px solid var(--accent); border-radius: var(--r); padding: 14px; display: flex; flex-direction: column; gap: 10px; background: var(--surface); }
+.decide .acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.audit { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; max-height: 280px; overflow-y: auto; }
+.audit li { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 8px; }
+.audit time { color: var(--muted); }
+
+.callout { border-radius: var(--r); padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.callout.warn { background: var(--warn-soft); }
+.callout.bad { background: var(--bad-soft); }
+.callout.info { background: var(--accent-soft); }
+.callout.ext { background: var(--ext-soft); }
+.callout p { margin: 0; }
+
+.form { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 18px; align-items: start; }
+.types { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.types button { text-align: left; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); padding: 10px 12px; cursor: pointer; }
+.types button[aria-pressed=true] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-soft); }
+.types b { display: block; }
+.types span { font-size: 12px; color: var(--muted); }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 13px; font-weight: 500; }
+.field label .req { color: var(--bad); }
+.field .hint { font-size: 12px; color: var(--muted); }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.meter { height: 6px; background: var(--sunken); border-radius: 3px; overflow: hidden; }
+.meter i { display: block; height: 100%; background: var(--accent); transition: width .2s; }
+.route { display: flex; flex-direction: column; gap: 4px; margin: 0; padding-left: 18px; }
+.dup { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding: 6px 0; border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent); }
+.dup:first-of-type { border-top: 0; }
+
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
+.chain { display: flex; flex-direction: column; gap: 6px; }
+.chain .link { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+.chain .link b { margin-right: auto; font-weight: 500; }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 9px 16px; border-radius: 8px; font-weight: 500; z-index: 20; max-width: calc(100% - 32px); }
+.ext-banner { background: var(--ext-soft); color: var(--fg); border-radius: var(--r); padding: 10px 14px; font-size: 13px; }
+.ext-banner b { color: var(--ext); }
+
+@media (max-width: 980px) {
+  .detail, .form { grid-template-columns: minmax(0, 1fr); }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .rail { flex-direction: row; overflow-x: auto; gap: 4px; padding-bottom: 4px; }
+  .rail button { white-space: nowrap; gap: 8px; }
+  .rail .sep, .rail .note, .who { display: none; }
+  .types, .grid2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .row { grid-template-columns: minmax(0, 1fr); }
+  .row .right { flex-direction: row; align-items: center; }
+  .as { width: 100%; } .as select { flex: 1; max-width: none; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand"><div class="mark" aria-hidden="true">LG</div><div><b>Lives Request Hub</b><span>Master data &amp; customer requests · prototype with demo data</span></div></div>
+    <div class="as"><label for="persona">Viewing as</label><select id="persona"></select></div>
+    <button class="btn small" data-act="reset" title="Restore the demo data">Reset demo</button>
+  </header>
+  <nav class="rail" id="rail" aria-label="Views"></nav>
+  <main id="main" aria-live="polite"></main>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function () {
+'use strict';
+const KEY = 'lives-request-hub-v1';
+const DAY = 864e5, HOUR = 36e5;
+const COUNTRIES = { SG: 'Singapore', MY: 'Malaysia', TH: 'Thailand', VN: 'Vietnam', PH: 'Philippines' };
+const ENTITIES = ['SPD', 'QTS', 'QTG'];
+const ROLES = ['BU Head', 'Finance', 'Quality/Regulatory', 'Business Support', 'Procurement', 'MDM'];
+const SAP_PREFIX = { Customer: 'C', Item: 'I', Vendor: 'V', 'Cost Center': 'CC' };
+const DOMAIN_BLURB = { Customer: 'New hospital, lab or clinic account', Item: 'New product or material code', Vendor: 'New supplier', 'Cost Center': 'New reporting unit' };
+
+const PEOPLE = [
+  { id: 'amy', name: 'Amy', title: 'Product Manager, SPD', org: 'int', roles: ['Requestor'] },
+  { id: 'marcus', name: 'Marcus', title: 'Regional Sales, QTG (new unit)', org: 'int', roles: ['Requestor', 'Sales'] },
+  { id: 'weijie', name: 'Wei Jie', title: 'Finance Manager', org: 'int', roles: ['Finance'] },
+  { id: 'siti', name: 'Siti', title: 'Quality & Regulatory Affairs', org: 'int', roles: ['Quality/Regulatory'] },
+  { id: 'daniel', name: 'Daniel', title: 'Business Unit Head', org: 'int', roles: ['BU Head'] },
+  { id: 'grace', name: 'Grace', title: 'Business Support', org: 'int', roles: ['Business Support', 'Procurement'] },
+  { id: 'priya', name: 'Priya', title: 'MDM Analyst', org: 'int', roles: ['MDM'] },
+  { id: 'lee', name: 'Dr. Lee', title: 'Lab Manager', company: 'Bangkok General Lab', country: 'TH', org: 'ext', kind: 'Customer' },
+  { id: 'cruz', name: 'Ms. Cruz', title: 'Procurement Officer', company: 'Manila Central Clinical Lab', country: 'PH', org: 'ext', kind: 'Customer' },
+  { id: 'hana', name: 'Hana', title: 'Account Manager', company: 'Meridian BioSupplies Sdn Bhd', country: 'MY', org: 'ext', kind: 'Vendor' },
+];
+const person = id => PEOPLE.find(p => p.id === id) || { id, name: 'Unknown', roles: [], org: 'int' };
+const holderOf = role => PEOPLE.find(p => p.org === 'int' && (p.roles || []).includes(role));
+
+/* ---------- utilities ---------- */
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function rel(ts) {
+  const d = Date.now() - ts;
+  if (d < 60e3) return 'just now';
+  if (d < HOUR) return Math.round(d / 60e3) + 'm ago';
+  if (d < DAY) return Math.round(d / HOUR) + 'h ago';
+  return Math.round(d / DAY) + 'd ago';
+}
+function dur(ms) {
+  if (ms < HOUR) return Math.max(1, Math.round(ms / 60e3)) + 'm';
+  if (ms < DAY) return Math.round(ms / HOUR) + 'h';
+  const d = Math.floor(ms / DAY), h = Math.round((ms % DAY) / HOUR);
+  return d + 'd' + (h ? ' ' + h + 'h' : '');
+}
+function stamp(ts) {
+  return new Date(ts).toLocaleString('en-SG', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+/* Duplicate detection: normalise legal suffixes and abbreviations, then bigram (Dice) similarity. */
+const ABBR = { natl: 'national', nat: 'national', univ: 'university', uni: 'university', hosp: 'hospital', med: 'medical', ctr: 'centre', center: 'centre', lab: 'laboratory', labs: 'laboratory', laboratories: 'laboratory', intl: 'international', gen: 'general', diag: 'diagnostics', diagnostic: 'diagnostics' };
+const STOP = new Set(['pte', 'ltd', 'sdn', 'bhd', 'co', 'inc', 'the', 'company', 'limited', 'plc', 'jsc', 'corp', 'corporation', 'llc', 'tbk', 'pt', 'of']);
+function norm(s) {
+  return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().split(' ')
+    .map(w => ABBR[w] || w).filter(w => w && !STOP.has(w)).join(' ');
+}
+function dice(a, b) {
+  a = norm(a); b = norm(b);
+  if (!a || !b) return 0;
+  if (a === b) return 1;
+  const grams = s => { const m = new Map(); for (let i = 0; i < s.length - 1; i++) { const g = s.slice(i, i + 2); m.set(g, (m.get(g) || 0) + 1); } return m; };
+  const A = grams(a), B = grams(b); let hit = 0, total = 0;
+  A.forEach(v => total += v); B.forEach(v => total += v);
+  A.forEach((v, g) => { if (B.has(g)) hit += Math.min(v, B.get(g)); });
+  return total ? (2 * hit) / total : 0;
+}
+function similar(name, domain, excludeId) {
+  if (!norm(name)) return [];
+  const out = [];
+  S.records.filter(r => r.type === domain).forEach(r => {
+    const score = dice(name, r.name); if (score >= 0.6) out.push({ score, label: r.name, ref: r.code, where: 'In SAP B1' });
+  });
+  S.requests.filter(q => q.kind === 'mdm' && q.domain === domain && q.id !== excludeId && q.state !== 'rejected' && q.state !== 'done').forEach(q => {
+    const score = dice(name, q.fields.name); if (score >= 0.6) out.push({ score, label: q.fields.name, ref: q.id, where: 'Open request', reqId: q.id });
+  });
+  return out.sort((x, y) => y.score - x.score).slice(0, 4);
+}
+
+/* Inbound triage: tells a purchase order apart from an enquiry, and flags senders not yet set up in SAP B1. Keyword rules in this prototype. */
+function classify(text, company) {
+  const t = String(text).toLowerCase().replace(/[‘’]/g, "'");
+  const poRef = (t.match(/\bpo\s*(?:no\.?|number|#)?\s*[:#-]?\s*(\d{3,})/) || [])[1];
+  const isPO = !!poRef || /purchase order|\b(?:we'd like to|we would like to|please|kindly) (?:order|supply|deliver)|confirm(?:ing)? (?:our |the )?order|\border(?:ing)? \d+/.test(t);
+  const asks = /\?|quot(?:e|ation)|pric(?:e|ing)|availab|lead time|brochure|catalog/.test(t);
+  const products = [...new Set([...String(text).matchAll(/product\s*([abc])\b/gi)].map(m => 'Product ' + m[1].toUpperCase()))];
+  const qty = [...String(text).matchAll(/(\d[\d,]*)\s*(kits?|boxes|units?|packs?|cartons?|vials?|cases?)\b/gi)].map(m => m[0]);
+  const best = S.records.filter(r => r.type === 'Customer').map(r => ({ r, score: dice(company, r.name) })).sort((a, b) => b.score - a.score)[0];
+  const known = best && best.score >= 0.9 ? best.r : null;
+  const reasons = [];
+  if (poRef) reasons.push('PO number ' + poRef);
+  else if (isPO) reasons.push('asks to order or deliver');
+  if (qty.length) reasons.push('quantities: ' + qty.join(', '));
+  if (isPO && asks) reasons.push('also contains a question');
+  if (!isPO) reasons.push(asks ? 'asks about price, stock or details' : 'no order wording found');
+  return { kind: isPO ? 'po' : 'enquiry', products, qty, poRef: poRef || null, alsoEnquiry: isPO && asks, knownCode: known ? known.code : null, reasons };
+}
+
+/* ---------- demo data ---------- */
+function defaultConfig() {
+  const f = (k, label, o) => Object.assign({ k, label, req: true, sensitive: false, type: 'text' }, o || {});
+  return {
+    version: 1, changedBy: 'priya', changedAt: Date.now() - 20 * DAY,
+    domains: {
+      Customer: { fields: [f('name', 'Legal name'), f('country', 'Country', { type: 'country' }), f('address', 'Billing address'), f('taxId', 'Tax / business reg. no.'), f('creditTerms', 'Credit terms', { sensitive: true, hint: 'e.g. Net 30' }), f('contact', 'Contact email', { req: false })], chain: ['BU Head', 'Finance', 'Business Support'] },
+      Item: { fields: [f('name', 'Item description'), f('productLine', 'Product line', { type: 'select', opts: ['Product A', 'Product B', 'Product C', 'Other'] }), f('uom', 'Unit of measure', { hint: 'e.g. box of 96' }), f('licence', 'Regulatory licence no.', { hint: 'Required for IVD and medical devices' }), f('hsCode', 'HS code', { req: false }), f('supplier', 'Preferred supplier', { req: false })], chain: ['Quality/Regulatory', 'BU Head', 'Business Support'] },
+      Vendor: { fields: [f('name', 'Legal name'), f('country', 'Country', { type: 'country' }), f('address', 'Registered address'), f('bank', 'Bank account', { sensitive: true }), f('paymentTerms', 'Payment terms', { sensitive: true }), f('contact', 'Contact email', { req: false })], chain: ['Finance', 'Procurement', 'BU Head'] },
+      'Cost Center': { fields: [f('name', 'Cost center name'), f('owner', 'Budget owner'), f('glGroup', 'GL account group'), f('purpose', 'Purpose', { req: false })], chain: ['Finance'] },
+    },
+  };
+}
+function snapshotDefs(cfg, domain) { return cfg.domains[domain].fields.map(x => Object.assign({}, x)); }
+
+function seed() {
+  const now = Date.now(), t = d => now - d * DAY;
+  const cfg = defaultConfig();
+  const records = [
+    ['C10012', 'Customer', 'National University Hospital', 'SPD', 'SG'], ['C10145', 'Customer', 'Chiang Mai Medical Laboratory', 'SPD', 'TH'],
+    ['C10230', 'Customer', 'Klang Valley Pathology Lab', 'QTS', 'MY'], ['C10311', 'Customer', 'Manila Central Clinical Lab', 'QTG', 'PH'],
+    ['C10402', 'Customer', 'Hanoi Biomedical Centre', 'QTS', 'VN'], ['C10233', 'Customer', 'Penang Specialist Hospital', 'SPD', 'MY'],
+    ['V20044', 'Vendor', 'Meridian BioSupplies Pte Ltd', 'SPD', 'SG'], ['V20051', 'Vendor', 'Asia Cold Chain Logistics', 'QTS', 'SG'],
+    ['I30101', 'Item', 'Sterile pipette tips 1000µL, 96/rack', 'SPD', 'SG'], ['I30102', 'Item', 'Sterile pipette tips 10µL, 96/rack', 'SPD', 'SG'],
+    ['I30210', 'Item', 'Product B reagent kit, 100 tests', 'QTS', 'SG'], ['I30311', 'Item', 'Product C control serum, 5 x 5 mL', 'QTG', 'SG'],
+    ['CC-SPD-SLS-SG', 'Cost Center', 'SPD Sales Singapore', 'SPD', 'SG'],
+  ].map(([code, type, name, entity, country]) => ({ code, type, name, entity, country, created: t(200 + Math.random() * 300) }));
+
+  const mk = (o) => Object.assign({ kind: 'mdm', messages: [], audit: [], state: 'open', party: null }, o);
+  const step = (role, status, by, at, since) => ({ role, status, by: by || null, at: at || null, since: since || null });
+
+  const r1041 = mk({
+    id: 'MDM-1041', domain: 'Item', entity: 'SPD', country: 'SG', requester: 'amy', created: t(3.9), defs: snapshotDefs(cfg, 'Item'),
+    fields: { name: 'Sterile pipette tips 200µL, 96/rack', productLine: 'Other', uom: 'Box of 10 racks', licence: 'Class A device, DE0512788', hsCode: '3926.90', supplier: 'Meridian BioSupplies Pte Ltd' },
+    steps: [step('Quality/Regulatory', 'done', 'siti', t(3.2)), step('BU Head', 'current', null, null, t(3.2)), step('Business Support', 'todo'), step('MDM', 'todo')],
+    messages: [
+      { by: 'amy', at: t(3.9), vis: 'int', text: 'Needed before the 4 Nov shipment so we can raise the sales order.' },
+      { by: 'siti', at: t(3.2), vis: 'int', text: 'Licence number checked against the regulator register. Cleared from QA/RA.' },
+      { by: 'system', at: t(1.2), vis: 'int', text: 'Automatic reminder sent to Daniel in Teams (waiting over 48h).' },
+    ],
+    audit: [{ at: t(3.9), by: 'amy', text: 'Submitted. Duplicate check: 2 similar items reviewed by requester (different volume).' }, { at: t(3.2), by: 'siti', text: 'Approved Quality/Regulatory step' }, { at: t(1.2), by: 'system', text: 'Reminder sent to BU Head (Daniel) via Teams' }],
+  });
+  const r1042 = mk({
+    id: 'MDM-1042', domain: 'Customer', entity: 'QTG', country: 'MY', requester: 'marcus', created: t(2.1), defs: snapshotDefs(cfg, 'Customer'),
+    fields: { name: 'Klinik Sentosa Medical Centre', country: 'MY', address: '12 Jalan Sentosa, 41200 Klang, Selangor', taxId: '201901023456 (SSM)', creditTerms: 'Net 60, limit MYR 80,000', contact: 'purchasing@kliniksentosa.example' },
+    steps: [step('BU Head', 'done', 'daniel', t(1.3)), step('Finance', 'current', null, null, t(1.3)), step('Business Support', 'todo'), step('MDM', 'todo')],
+    messages: [{ by: 'marcus', at: t(2.1), vis: 'int', text: 'First account for our new unit in Klang. They want Product A on monthly POs from December.' }],
+    audit: [{ at: t(2.1), by: 'marcus', text: 'Submitted. Duplicate check: no similar customers' }, { at: t(1.3), by: 'daniel', text: 'Approved BU Head step' }],
+  });
+  const r1039 = mk({
+    id: 'MDM-1039', domain: 'Vendor', entity: 'QTS', country: 'MY', requester: 'grace', party: 'hana', created: t(4.5), defs: snapshotDefs(cfg, 'Vendor'), state: 'info',
+    fields: { name: 'Meridian BioSupplies Sdn Bhd', country: 'MY', address: 'Lot 7, Jalan Teknologi, 47810 Petaling Jaya', bank: 'Maybank 5140 2231 8890', paymentTerms: 'Net 45', contact: 'hana@meridianbio.example', dupNote: 'Malaysian subsidiary of V20044. Separate legal entity with its own bank account and tax registration.' },
+    steps: [step('Finance', 'current', null, null, t(2.0)), step('Procurement', 'todo'), step('BU Head', 'todo'), step('MDM', 'todo')],
+    returnedBy: 'weijie', returnedAt: t(2.0),
+    messages: [
+      { by: 'grace', at: t(4.5), vis: 'int', text: 'New MY entity of an existing supplier. Hana from Meridian is copied for anything we need from them.' },
+      { by: 'weijie', at: t(2.0), vis: 'ext', text: 'Hi Hana, the bank letter you sent shows the account under "Meridian Holdings", not Meridian BioSupplies Sdn Bhd. Could you send a bank confirmation letter in the company\'s own name?' },
+    ],
+    audit: [{ at: t(4.5), by: 'grace', text: 'Submitted. Duplicate warning on V20044 overridden with reason' }, { at: t(2.0), by: 'weijie', text: 'Returned for information at Finance step' }],
+  });
+  const r1036 = mk({
+    id: 'MDM-1036', domain: 'Customer', entity: 'QTS', country: 'VN', requester: 'marcus', created: t(6.2), defs: snapshotDefs(cfg, 'Customer'), state: 'done', sapCode: 'C10488', closed: t(3.6),
+    fields: { name: 'Saigon Diagnostics Co.', country: 'VN', address: '88 Nguyen Hue, District 1, Ho Chi Minh City', taxId: '0312345678', creditTerms: 'Net 30', contact: 'lab@saigondx.example' },
+    steps: [step('BU Head', 'done', 'daniel', t(5.8)), step('Finance', 'done', 'weijie', t(4.9)), step('Business Support', 'done', 'grace', t(4.1)), step('MDM', 'done', 'priya', t(3.6))],
+    messages: [{ by: 'priya', at: t(3.6), vis: 'int', text: 'Created in SAP B1 as C10488. You can raise sales orders now.' }],
+    audit: [{ at: t(6.2), by: 'marcus', text: 'Submitted' }, { at: t(5.8), by: 'daniel', text: 'Approved BU Head step' }, { at: t(4.9), by: 'weijie', text: 'Approved Finance step' }, { at: t(4.1), by: 'grace', text: 'Approved Business Support step' }, { at: t(3.6), by: 'priya', text: 'Created in SAP B1 as C10488' }],
+  });
+  records.push({ code: 'C10488', type: 'Customer', name: 'Saigon Diagnostics Co.', entity: 'QTS', country: 'VN', created: t(3.6) });
+
+  const S0 = { v: 1, seq: 1043, cseq: 209, config: cfg, configLog: [{ at: t(20), by: 'priya', text: 'Added "Regulatory licence no." as required for Items' }], records, requests: [r1041, r1042, r1039, r1036] };
+  // inbound messages from external parties
+  S = S0;
+  const conv = (id, party, at, subject, text) => {
+    const p = person(party);
+    return mk({ id, kind: 'conv', party, requester: party, created: at, entity: null, country: p.country, subject, text, cls: classify(text, p.company), assigned: 'Sales',
+      messages: [], audit: [{ at, by: party, text: 'Message received from external portal' }] });
+  };
+  const c208 = conv('MSG-208', 'lee', now - 5 * HOUR, 'Order: Product B kits for November', 'Hi, we\'d like to order 40 kits of Product B for delivery in early November. Could you also send pricing for Product C reagents?');
+  const c207 = conv('MSG-207', 'cruz', t(1.1), 'PO #45821', 'Please find PO 45821 for 120 units of Product A and 60 units of Product C, delivery by 15 Nov to our Makati lab.');
+  c207.messages.push({ by: 'marcus', at: t(0.9), vis: 'ext', text: 'Received, thank you. Order entered in SAP B1, confirmation to follow from our Manila office.' });
+  c207.state = 'done'; c207.closed = t(0.9);
+  c207.audit.push({ at: t(0.9), by: 'marcus', text: 'Marked handled: order entered against C10311' });
+  const c206 = conv('MSG-206', 'cruz', t(2.4), 'Lead time for Product B', 'What is the current lead time for Product B reagent kits to Manila? We are planning Q1 volumes.');
+  S0.requests.unshift(c208, c207, c206);
+  return S0;
+}
+
+/* ---------- state ---------- */
+let S = null;
+try { S = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { S = null; }
+if (!S || S.v !== 1) S = seed();
+const ui = { persona: 'amy', view: 'work', sel: null, draft: null, filter: 'all', revealed: {}, ruleDomain: 'Customer', vis: {} };
+try { const u = JSON.parse(localStorage.getItem(KEY + '-ui') || 'null'); if (u && person(u.persona).id) Object.assign(ui, { persona: u.persona, view: u.view, sel: u.sel }); } catch (e) {}
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(S)); localStorage.setItem(KEY + '-ui', JSON.stringify({ persona: ui.persona, view: ui.view, sel: ui.sel })); } catch (e) {}
+}
+const me = () => person(ui.persona);
+const isExt = () => me().org === 'ext';
+const has = role => (me().roles || []).includes(role);
+const req = id => S.requests.find(r => r.id === id);
+const current = r => r.steps && r.steps.find(s => s.status === 'current');
+function audit(r, text, by) { r.audit.push({ at: Date.now(), by: by || ui.persona, text }); }
+function toast(msg) {
+  const el = document.getElementById('toast'); el.textContent = msg; el.hidden = false;
+  clearTimeout(toast.t); toast.t = setTimeout(() => { el.hidden = true; }, 2600);
+}
+
+/* Who needs to act next on a request */
+function waitingOn(r) {
+  if (r.kind === 'conv') return r.state === 'open' ? { role: 'Sales', who: holderOf('Sales') } : null;
+  if (r.state === 'info') return { role: 'Requestor', who: person(r.requester) };
+  const c = current(r); if (!c || r.state !== 'open') return null;
+  return { role: c.role, who: holderOf(c.role), since: c.since };
+}
+function onMe(r, p) {
+  p = p || me();
+  if (p.org === 'ext') return false;
+  if (r.kind === 'conv') return r.state === 'open' && (p.roles || []).includes('Sales');
+  if (r.state === 'info') return r.requester === p.id;
+  const c = current(r); return r.state === 'open' && !!c && (p.roles || []).includes(c.role);
+}
+function visibleTo(r, p) { p = p || me(); return p.org === 'ext' ? r.party === p.id : true; }
+function stateInfo(r) {
+  if (r.kind === 'conv') return r.state === 'done' ? ['p-done', 'Handled'] : ['p-open', 'New'];
+  return { open: ['p-open', 'In approval'], info: ['p-info', 'Needs info'], done: ['p-done', 'In SAP B1'], rejected: ['p-bad', 'Rejected'] }[r.state];
+}
+/* External parties see plain-language status, never internal role names */
+function extStatus(r) {
+  if (r.kind === 'conv') return r.state === 'done' ? 'Handled by Lives Group' : 'Received, with our regional sales team';
+  if (r.state === 'info') return 'Lives Group needs something from you';
+  if (r.state === 'done') return 'Approved and set up';
+  if (r.state === 'rejected') return 'Closed';
+  return 'Under review at Lives Group';
+}
+function titleOf(r) { return r.kind === 'conv' ? r.subject : r.fields.name; }
+
+/* ---------- render ---------- */
+const $main = document.getElementById('main');
+const $rail = document.getElementById('rail');
+const $persona = document.getElementById('persona');
+
+function renderPersona() {
+  const opt = p => {
+    const n = S.requests.filter(r => onMe(r, p)).length;
+    return `<option value="${p.id}" ${p.id === ui.persona ? 'selected' : ''}>${esc(p.name)}, ${esc(p.org === 'ext' ? p.company : p.title)}${n ? ` (${n} waiting)` : ''}</option>`;
+  };
+  $persona.innerHTML = `<optgroup label="Lives Group staff">${PEOPLE.filter(p => p.org === 'int').map(opt).join('')}</optgroup><optgroup label="External: customers &amp; vendors">${PEOPLE.filter(p => p.org === 'ext').map(opt).join('')}</optgroup>`;
+}
+function renderRail() {
+  const p = me();
+  let items;
+  if (p.org === 'ext') {
+    const n = S.requests.filter(r => r.party === p.id && r.state === 'info').length;
+    items = [['work', 'My requests', n], ['send', 'New message', 0]];
+  } else {
+    const n = S.requests.filter(r => onMe(r)).length;
+    const inbound = S.requests.filter(r => r.kind === 'conv' && r.state === 'open').length;
+    items = [['work', 'My work', n], ['all', 'All requests', 0], ['new', 'New request', 0], ['inbound', 'Customer inbox', inbound], 'sep', ['master', 'SAP B1 records', 0], ['rules', 'Forms & approvals', 0]];
+  }
+  $rail.innerHTML = items.map(it => it === 'sep' ? '<div class="sep"></div>' :
+    `<button data-act="nav" data-view="${it[0]}" aria-current="${ui.view === it[0] || (ui.view === 'detail' && it[0] === ui.from) ? 'true' : 'false'}"><span>${it[1]}</span>${it[2] ? `<span class="count">${it[2]}</span>` : ''}</button>`).join('') +
+    `<div class="who"><b>${esc(p.name)}</b>${esc(p.org === 'ext' ? p.title + ', ' + p.company : p.title)}<div class="muted" style="margin-top:4px">${p.org === 'ext' ? 'External party. Sees only their own requests and messages shared with them.' : 'Roles: ' + esc((p.roles || []).join(', '))}</div></div>`;
+}
+
+function render() {
+  renderPersona(); renderRail();
+  const v = ui.view;
+  if (v === 'detail' && req(ui.sel) && visibleTo(req(ui.sel))) $main.innerHTML = viewDetail(req(ui.sel));
+  else if (isExt()) $main.innerHTML = v === 'send' ? viewSend() : viewExtWork();
+  else if (v === 'all') $main.innerHTML = viewAll();
+  else if (v === 'new') { $main.innerHTML = viewNew(); updateNewSide(); }
+  else if (v === 'inbound') $main.innerHTML = viewInbound();
+  else if (v === 'master') $main.innerHTML = viewMaster();
+  else if (v === 'rules') $main.innerHTML = viewRules();
+  else $main.innerHTML = viewWork();
+  save();
+}
+
+function row(r) {
+  const [cls, label] = stateInfo(r);
+  const w = waitingOn(r);
+  const age = w && w.since ? Date.now() - w.since : null;
+  const kindTag = r.kind === 'conv'
+    ? `<span class="tag ${r.cls.kind === 'po' ? 'po' : ''}">${r.cls.kind === 'po' ? 'Purchase order' : 'Enquiry'}</span><span class="tag ext">External</span>${!r.cls.knownCode && !r.linked ? '<span class="tag warn">Not in SAP B1</span>' : ''}`
+    : `<span class="tag">${esc(r.domain)} setup</span>${r.party ? '<span class="tag ext">External party</span>' : ''}`;
+  const who = r.kind === 'conv' ? `${esc(person(r.party).name)}, ${esc(person(r.party).company)}` : `by ${esc(person(r.requester).name)} · ${esc(r.entity)} · ${esc(COUNTRIES[r.country] || r.country)}`;
+  let right = isExt() ? `<span>${esc(extStatus(r))}</span>` : `<span class="pill ${cls}">${label}</span>`;
+  if (!isExt() && w && r.kind !== 'conv') right += `<span>${w.role === 'Requestor' ? 'with requester' : 'with ' + esc(w.role)}${age ? ' · ' + dur(age) : ''}</span>`;
+  if (!isExt() && age && age > 2 * DAY) right += `<span class="tag warn">Reminder sent</span>`;
+  if (r.state === 'done' && r.sapCode) right += `<span class="mono">${esc(r.sapCode)}</span>`;
+  return `<button class="row" data-act="open" data-id="${r.id}"><span class="mono muted">${r.id}</span><span style="min-width:0"><span class="t">${esc(titleOf(r))}</span><span class="meta">${kindTag}<span>${who}</span><span>· ${rel(r.created)}</span></span></span><span class="right">${right}</span></button>`;
+}
+const listOf = (arr, emptyText) => arr.length ? `<div class="list">${arr.map(row).join('')}</div>` : `<div class="empty">${emptyText}</div>`;
+
+function viewWork() {
+  const p = me();
+  const mine = S.requests.filter(r => onMe(r));
+  const own = S.requests.filter(r => r.kind === 'mdm' && r.requester === p.id && !onMe(r));
+  const intro = has('MDM') ? 'Requests that have every approval and are ready for you to check and create in SAP B1.'
+    : has('Sales') ? 'Customer messages to triage, plus requests that need your input.'
+    : (p.roles || []).some(x => ROLES.includes(x)) ? 'Requests waiting on your approval. Each one arrives here and in Teams, so nothing sits unseen in an inbox.'
+    : 'Requests that need something from you, and the status of everything you have submitted.';
+  return `<div class="head"><div><h2>Good to see you, ${esc(p.name)}</h2><p>${intro}</p></div>${p.roles.includes('Requestor') ? '<button class="btn primary" data-act="nav" data-view="new">New request</button>' : ''}</div>
+  <section class="section"><h3>Waiting on you · ${mine.length}</h3>${listOf(mine, 'Nothing is waiting on you right now.')}</section>
+  ${own.length || p.roles.includes('Requestor') ? `<section class="section"><h3>Your requests · ${own.length}</h3>${listOf(own, 'You have not submitted any requests yet.')}</section>` : ''}`;
+}
+
+function viewAll() {
+  const reqs = S.requests.filter(r => r.kind === 'mdm');
+  const open = reqs.filter(r => r.state === 'open' || r.state === 'info');
+  const stuck = open.filter(r => { const w = waitingOn(r); return w && w.since && Date.now() - w.since > 2 * DAY; });
+  const done = reqs.filter(r => r.state === 'done' && r.closed);
+  const avg = done.length ? done.reduce((a, r) => a + (r.closed - r.created), 0) / done.length : 0;
+  const f = ui.filter;
+  const shown = reqs.filter(r => f === 'all' || (f === 'open' && r.state === 'open') || (f === 'info' && r.state === 'info') || (f === 'done' && r.state === 'done'));
+  const fb = (k, l) => `<button aria-pressed="${f === k}" data-act="filter" data-f="${k}">${l}</button>`;
+  return `<div class="head"><div><h2>All master data requests</h2><p>Everyone can see where every request stands, so nobody has to email to ask.</p></div></div>
+  <div class="stats">
+    <div class="stat"><b>${open.length}</b><span>open requests</span></div>
+    <div class="stat"><b>${stuck.length}</b><span>waiting over 48h (auto-reminded)</span></div>
+    <div class="stat"><b>${done.length ? dur(avg) : 'n/a'}</b><span>average submit to SAP B1</span></div>
+    <div class="stat"><b>18d</b><span>email baseline in the brief</span></div>
+  </div>
+  <div class="seg" role="group" aria-label="Filter">${fb('all', 'All')}${fb('open', 'In approval')}${fb('info', 'Needs info')}${fb('done', 'In SAP B1')}</div>
+  ${listOf(shown, 'No requests match this filter.')}`;
+}
+
+function viewInbound() {
+  const convs = S.requests.filter(r => r.kind === 'conv');
+  return `<div class="head"><div><h2>Customer inbox</h2><p>Messages from customers and vendors arrive here instead of personal mailboxes. Each is auto-tagged as a purchase order or an enquiry, and senders not yet in SAP B1 are flagged so setup can start the same day.</p></div></div>
+  <section class="section"><h3>Open · ${convs.filter(r => r.state === 'open').length}</h3>${listOf(convs.filter(r => r.state === 'open'), 'Inbox is clear.')}</section>
+  <section class="section"><h3>Handled</h3>${listOf(convs.filter(r => r.state !== 'open'), 'Nothing handled yet.')}</section>`;
+}
+
+function viewExtWork() {
+  const p = me();
+  const mine = S.requests.filter(r => r.party === p.id);
+  const need = mine.filter(r => r.state === 'info');
+  return `<div class="ext-banner"><b>External portal.</b> This is what ${esc(p.company)} sees: only their own requests and the messages Lives Group chose to share. Internal notes, approvers and sensitive fields stay hidden.</div>
+  <div class="head"><div><h2>Hello ${esc(p.name)}</h2><p>Track your orders, enquiries and onboarding with Lives Group in one place.</p></div><button class="btn primary" data-act="nav" data-view="send">New message</button></div>
+  ${need.length ? `<section class="section"><h3>Lives Group needs something from you</h3>${listOf(need, '')}</section>` : ''}
+  <section class="section"><h3>Your requests and messages</h3>${listOf(mine.filter(r => r.state !== 'info'), 'Nothing here yet. Send an order or a question to get started.')}</section>`;
+}
+
+function viewSend() {
+  const p = me();
+  return `<div class="ext-banner"><b>External portal.</b> Sending as ${esc(p.name)}, ${esc(p.company)}.</div>
+  <div class="head"><div><h2>Send an order or question</h2><p>Your message goes straight to the right Lives Group team. You will see replies and status here.</p></div></div>
+  <div class="form"><div class="panel">
+    <div class="field"><label for="x-subject">Subject</label><input type="text" id="x-subject" placeholder="e.g. PO 45910 for Product A"></div>
+    <div class="field"><label for="x-text">Message</label><textarea id="x-text" rows="6" placeholder="Include your PO number and quantities if this is an order."></textarea></div>
+    <div><button class="btn primary" data-act="send-ext">Send to Lives Group</button></div>
+  </div>
+  <aside class="panel" id="x-preview"><h3>How it will be routed</h3><p class="muted" style="margin:0">Start typing to see how the hub reads your message.</p></aside></div>`;
+}
+function updateSendPreview() {
+  const el = document.getElementById('x-preview'); if (!el) return;
+  const text = (document.getElementById('x-subject').value + '\n' + document.getElementById('x-text').value).trim();
+  if (!text) { el.innerHTML = '<h3>How it will be routed</h3><p class="muted" style="margin:0">Start typing to see how the hub reads your message.</p>'; return; }
+  const c = classify(text, me().company);
+  el.innerHTML = `<h3>How it will be routed</h3>
+    <div><span class="tag ${c.kind === 'po' ? 'po' : ''}">${c.kind === 'po' ? 'Purchase order' : 'Enquiry'}</span></div>
+    <p style="margin:0">${c.kind === 'po' ? 'Goes to the regional sales team to enter in SAP B1.' : 'Goes to the regional sales team to answer.'}</p>
+    ${c.products.length || c.qty.length ? `<p class="muted" style="margin:0">Picked up: ${esc(c.products.concat(c.qty).join(', '))}</p>` : ''}
+    <p class="muted" style="margin:0;font-size:12.5px">Why: ${esc(c.reasons.join('; '))}</p>`;
+}
+
+/* ----- new request form ----- */
+function newDraft(domain) {
+  return { domain, entity: 'SPD', country: 'SG', fields: {}, dupOk: false, dupNote: '', note: '' };
+}
+function viewNew() {
+  if (!ui.draft) ui.draft = newDraft('Customer');
+  const d = ui.draft, cfg = S.config.domains[d.domain];
+  const typeBtn = k => `<button aria-pressed="${d.domain === k}" data-act="domain" data-d="${k}"><b>${k}</b><span>${DOMAIN_BLURB[k]}</span></button>`;
+  const input = f => {
+    const v = d.fields[f.k] || '';
+    let ctl;
+    if (f.type === 'country') ctl = `<select id="f-${f.k}" data-field="${f.k}"><option value="">Choose…</option>${Object.entries(COUNTRIES).map(([c, n]) => `<option value="${c}" ${v === c ? 'selected' : ''}>${n}</option>`).join('')}</select>`;
+    else if (f.type === 'select') ctl = `<select id="f-${f.k}" data-field="${f.k}"><option value="">Choose…</option>${f.opts.map(o => `<option ${v === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
+    else ctl = `<input type="text" id="f-${f.k}" data-field="${f.k}" value="${esc(v)}" ${f.hint ? `placeholder="${esc(f.hint)}"` : ''}>`;
+    return `<div class="field"><label for="f-${f.k}">${esc(f.label)} ${f.req ? '<span class="req" title="Required">*</span>' : '<span class="muted">(optional)</span>'}${f.sensitive ? '<span class="lock">RESTRICTED</span>' : ''}</label>${ctl}${f.sensitive ? '<span class="hint">Only Finance and MDM can view this after submission. Never sent by email.</span>' : ''}</div>`;
+  };
+  return `<div class="head"><div><h2>New master data request</h2><p>One standard form per record type. Required fields, duplicate checks and the approval route all come from the rules MDM maintains, so you never need to guess.</p></div></div>
+  <div class="types" role="group" aria-label="Record type">${Object.keys(S.config.domains).map(typeBtn).join('')}</div>
+  <div class="form">
+    <div class="panel">
+      <div class="grid2">
+        <div class="field"><label for="f-entity">Business entity <span class="req">*</span></label><select id="f-entity" data-meta="entity">${ENTITIES.map(e => `<option ${d.entity === e ? 'selected' : ''}>${e}</option>`).join('')}</select></div>
+        <div class="field"><label for="f-ctry">Requesting country <span class="req">*</span></label><select id="f-ctry" data-meta="country">${Object.entries(COUNTRIES).map(([c, n]) => `<option value="${c}" ${d.country === c ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
+      </div>
+      ${cfg.fields.map(input).join('')}
+      <div class="field"><label for="f-note">Note for approvers <span class="muted">(optional)</span></label><textarea id="f-note" data-meta="note" rows="2" placeholder="Why it is needed and by when">${esc(d.note)}</textarea></div>
+    </div>
+    <aside class="section" id="new-side"></aside>
+  </div>`;
+}
+function updateNewSide() {
+  const el = document.getElementById('new-side'); if (!el || !ui.draft) return;
+  const d = ui.draft, cfg = S.config.domains[d.domain];
+  const req = cfg.fields.filter(f => f.req), filled = req.filter(f => String(d.fields[f.k] || '').trim());
+  const missing = req.filter(f => !String(d.fields[f.k] || '').trim());
+  const dups = similar(d.fields.name, d.domain);
+  const strong = dups.filter(x => x.score >= 0.9);
+  const blocked = strong.length && !(d.dupOk && d.dupNote.trim().length >= 10);
+  const ready = !missing.length && !blocked;
+  const chain = cfg.chain.concat(['MDM']);
+  el.innerHTML = `
+  <div class="panel"><h3>Completeness</h3><div class="meter"><i style="width:${req.length ? Math.round(filled.length / req.length * 100) : 100}%"></i></div>
+    <p style="margin:0">${filled.length} of ${req.length} required fields done${missing.length ? `. Still needed: ${esc(missing.map(f => f.label).join(', '))}` : '. All set.'}</p></div>
+  ${dups.length ? `<div class="callout ${strong.length ? 'bad' : 'warn'}"><b>${strong.length ? 'This looks like a record that already exists' : 'Similar records found'}</b>
+    ${dups.map(x => `<div class="dup"><span>${esc(x.label)}<br><span class="muted" style="font-size:12px">${x.where}</span></span><span class="mono">${esc(x.ref)} · ${Math.round(x.score * 100)}%</span></div>`).join('')}
+    ${strong.length ? `<label style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" id="dup-ok" ${d.dupOk ? 'checked' : ''}> <span>This is a different legal entity or product</span></label>
+    <textarea id="dup-note" rows="2" placeholder="Explain the difference (shown to approvers)">${esc(d.dupNote)}</textarea>` : '<p style="margin:0;font-size:12.5px">Check these are different before submitting. Approvers will see the match.</p>'}</div>` : (norm(d.fields.name) ? `<div class="callout info"><p>No similar ${esc(d.domain.toLowerCase())} records in SAP B1 or open requests.</p></div>` : '')}
+  <div class="panel"><h3>Approval route</h3><ol class="route">${chain.map(r => { const h = holderOf(r); return `<li>${esc(r === 'MDM' ? 'MDM final check & create in SAP B1' : r)} <span class="muted">· ${esc(h ? h.name : 'unassigned')}</span></li>`; }).join('')}</ol>
+    <p class="muted" style="margin:0;font-size:12.5px">Each approver is notified in Teams the moment it is their turn, and reminded after 48h.</p></div>
+  <button class="btn primary" data-act="submit" ${ready ? '' : 'disabled'}>${ready ? 'Submit request' : missing.length ? 'Complete required fields to submit' : 'Confirm the duplicate check to submit'}</button>`;
+}
+
+/* ----- detail ----- */
+function fieldValue(r, f) {
+  const v = r.fields[f.k];
+  if (!v) return '<span class="muted">Not provided</span>';
+  if (f.type === 'country') return esc(COUNTRIES[v] || v);
+  if (!f.sensitive) return esc(v);
+  const canSee = has('Finance') || has('MDM');
+  const key = r.id + ':' + f.k;
+  if (!canSee) return `<span class="masked">••••••••</span><span class="lock">Finance &amp; MDM only</span>`;
+  if (ui.revealed[key]) return `${esc(v)} <span class="lock">viewing is logged</span>`;
+  return `<span class="masked">••••••••</span> <button class="linkish" data-act="reveal" data-id="${r.id}" data-k="${f.k}">Reveal</button>`;
+}
+function msgHtml(m, r) {
+  if (m.by === 'system') return `<div class="msg system"><p>${esc(m.text)} <span class="mono">· ${stamp(m.at)}</span></p></div>`;
+  const p = person(m.by);
+  const shared = m.vis === 'ext';
+  return `<div class="msg ${shared ? 'shared' : ''}"><div class="by"><b>${esc(p.name)}</b><span class="muted">${esc(p.org === 'ext' ? p.company : p.title)}</span>${!isExt() && r.party ? (shared ? '<span class="tag ext">Shared with ' + esc(person(r.party).company) + '</span>' : '<span class="tag">Internal note</span>') : ''}<span class="muted mono">${stamp(m.at)}</span></div><p>${esc(m.text)}</p></div>`;
+}
+function composer(r) {
+  if (r.state === 'rejected') return '';
+  const ext = isExt();
+  const vis = ui.vis[r.id] || (r.kind === 'conv' ? 'ext' : 'int');
+  const toggle = !ext && r.party ? `<div class="seg" role="group" aria-label="Who sees this"><button aria-pressed="${vis === 'int'}" data-act="vis" data-id="${r.id}" data-v="int">Internal note</button><button aria-pressed="${vis === 'ext'}" data-act="vis" data-id="${r.id}" data-v="ext">Reply to ${esc(person(r.party).name)}</button></div>` : '<span></span>';
+  const ph = ext ? 'Write to Lives Group' : vis === 'ext' ? 'Visible to ' + person(r.party).company : 'Only Lives Group staff see this. Mention a role, e.g. @Finance';
+  return `<div class="composer"><textarea id="reply-${r.id}" rows="2" placeholder="${esc(ph)}"></textarea><div class="bar">${toggle}<button class="btn" data-act="post" data-id="${r.id}">Send</button></div></div>`;
+}
+function stepsHtml(r) {
+  const items = [`<li class="s-done"><span class="dot">✓</span><div><div class="lbl">Submitted</div><div class="sub">${esc(person(r.requester).name)} · ${stamp(r.created)}</div></div></li>`];
+  r.steps.forEach(s => {
+    const h = s.by ? person(s.by) : holderOf(s.role);
+    const label = s.role === 'MDM' ? 'MDM check & create in SAP B1' : s.role;
+    let cls = 's-todo', sub = `${esc(h ? h.name : 'Unassigned')} · not yet`, dot = '';
+    if (s.status === 'done') { cls = 's-done'; dot = '✓'; sub = `${esc(h.name)} approved · ${stamp(s.at)}`; }
+    else if (s.status === 'rejected') { cls = 's-bad'; dot = '✕'; sub = `${esc(h.name)} rejected · ${stamp(s.at)}`; }
+    else if (s.status === 'current' && r.state === 'info') { cls = 's-info'; sub = `Returned to ${esc(person(r.requester).name)} for info · ${dur(Date.now() - r.returnedAt)} ago`; }
+    else if (s.status === 'current') { const age = Date.now() - s.since; cls = 's-current'; sub = `With ${esc(h ? h.name : 'unassigned')} for ${dur(age)}${age > 2 * DAY ? ' · reminder sent' : ' · notified in Teams'}`; }
+    items.push(`<li class="${cls}"><span class="dot">${dot}</span><div><div class="lbl">${esc(label)}</div><div class="sub">${sub}</div></div></li>`);
+  });
+  if (r.state === 'done') items.push(`<li class="s-done"><span class="dot">✓</span><div><div class="lbl">Live in SAP B1 as <span class="mono">${esc(r.sapCode)}</span></div><div class="sub">Requester notified · total ${dur(r.closed - r.created)}</div></div></li>`);
+  return `<ol class="steps">${items.join('')}</ol>`;
+}
+function decisionHtml(r) {
+  if (!onMe(r) || isExt()) return '';
+  if (r.kind === 'conv') return '';
+  if (r.state === 'info') return `<div class="decide"><b>${esc(person(r.returnedBy).name)} needs more information from you</b><p class="muted" style="margin:0">Update the fields below if needed, add a reply in the conversation, then resubmit. It goes straight back to ${esc(current(r).role)}.</p><div class="acts"><button class="btn primary" data-act="resubmit" data-id="${r.id}">Resubmit</button></div></div>`;
+  const c = current(r);
+  const final = c.role === 'MDM';
+  const dups = similar(r.fields.name, r.domain, r.id);
+  return `<div class="decide"><b>${final ? 'Final check: create this record in SAP B1' : 'Your approval: ' + esc(c.role)}</b>
+    ${dups.length ? `<div class="callout warn"><p><b>Duplicate check:</b> ${dups.map(x => esc(x.label) + ' (' + esc(x.ref) + ', ' + Math.round(x.score * 100) + '%)').join('; ')}</p>${r.fields.dupNote ? `<p>Requester's reason: ${esc(r.fields.dupNote)}</p>` : ''}</div>` : '<p class="muted" style="margin:0">Duplicate check: no similar records.</p>'}
+    <textarea id="dec-${r.id}" rows="2" placeholder="Comment (required to return or reject)"></textarea>
+    <div class="acts"><button class="btn primary" data-act="approve" data-id="${r.id}">${final ? 'Create in SAP B1' : 'Approve'}</button><button class="btn" data-act="return" data-id="${r.id}">Ask for info</button><button class="btn danger" data-act="reject" data-id="${r.id}">Reject</button></div></div>`;
+}
+function editableFields(r) {
+  return r.defs.map(f => {
+    const v = r.fields[f.k] || '';
+    const ctl = f.type === 'country' ? `<select id="e-${f.k}" data-edit="${f.k}">${Object.entries(COUNTRIES).map(([c, n]) => `<option value="${c}" ${v === c ? 'selected' : ''}>${n}</option>`).join('')}</select>`
+      : f.type === 'select' ? `<select id="e-${f.k}" data-edit="${f.k}">${f.opts.map(o => `<option ${v === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select>`
+      : `<input type="text" id="e-${f.k}" data-edit="${f.k}" value="${esc(v)}">`;
+    return `<dt><label for="e-${f.k}">${esc(f.label)}</label></dt><dd>${ctl}</dd>`;
+  }).join('');
+}
+
+function viewDetail(r) {
+  const ext = isExt();
+  const [cls, label] = stateInfo(r);
+  const back = `<button class="linkish" data-act="nav" data-view="${ui.from || 'work'}">← Back</button>`;
+  const msgs = r.messages.filter(m => !ext || m.vis === 'ext');
+  if (r.kind === 'conv') {
+    const c = r.cls, p = person(r.party), linked = r.linked && req(r.linked);
+    const triage = ext ? '' : `<div class="panel"><h3>Auto-triage</h3>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="tag ${c.kind === 'po' ? 'po' : ''}">${c.kind === 'po' ? 'Purchase order' : 'Enquiry'}</span>${c.alsoEnquiry ? '<span class="tag">+ question</span>' : ''}${c.products.map(x => `<span class="tag">${esc(x)}</span>`).join('')}</div>
+      <p class="muted" style="margin:0;font-size:12.5px">Why: ${esc(c.reasons.join('; '))}. Counts toward ${c.kind === 'po' ? 'order' : 'enquiry'} volumes in the regional view, kept separate from MDM setup requests.</p>
+      ${r.state === 'open' ? `<div><button class="btn small" data-act="reclass" data-id="${r.id}">Mark as ${c.kind === 'po' ? 'enquiry' : 'purchase order'}</button></div>` : ''}
+      ${c.knownCode ? `<div class="callout info"><p>${esc(p.company)} is in SAP B1 as <span class="mono">${esc(c.knownCode)}</span>. The order can be entered now.</p></div>`
+        : linked ? `<div class="callout ${linked.state === 'done' ? 'info' : 'warn'}"><p>Customer setup ${linked.state === 'done' ? 'complete: <span class="mono">' + esc(linked.sapCode) + '</span>' : 'in progress'}: <button class="linkish" data-act="open" data-id="${linked.id}">${linked.id}</button> (${esc(stateInfo(linked)[1])})</p></div>`
+        : `<div class="callout bad"><p><b>${esc(p.company)} is not a customer in SAP B1 yet.</b> The order can't be entered until the account is set up.</p><div><button class="btn primary small" data-act="setup" data-id="${r.id}">Start customer setup</button></div></div>`}
+      ${r.state === 'open' ? `<div><button class="btn" data-act="handled" data-id="${r.id}">Mark handled</button></div>` : ''}</div>`;
+    return `${back}
+    <div class="head"><div><div class="mono muted">${r.id}</div><h2>${esc(r.subject)}</h2><p>${esc(p.name)}, ${esc(p.title)} at ${esc(p.company)} · ${esc(COUNTRIES[p.country])}</p></div>${ext ? `<span class="tag ext">${esc(extStatus(r))}</span>` : `<span class="pill ${cls}">${label}</span>`}</div>
+    <div class="detail"><div class="section">
+      <div class="panel"><h3>Conversation</h3><div class="thread">
+        <div class="msg shared"><div class="by"><b>${esc(p.name)}</b><span class="muted">${esc(p.company)}</span><span class="muted mono">${stamp(r.created)}</span></div><p>${esc(r.text)}</p></div>
+        ${msgs.map(m => msgHtml(m, r)).join('')}</div>${composer(r)}</div></div>
+      <aside class="section">${triage}${ext ? '' : auditHtml(r)}</aside></div>`;
+  }
+  const defs = r.defs;
+  const canEdit = r.state === 'info' && r.requester === ui.persona;
+  const showFields = !ext;
+  const linkedConv = S.requests.find(x => x.linked === r.id);
+  return `${back}
+  <div class="head"><div><div class="mono muted">${r.id} · ${esc(r.domain)} setup · ${esc(r.entity)} · ${esc(COUNTRIES[r.country] || r.country)}</div><h2>${esc(r.fields.name)}</h2><p>Requested by ${esc(person(r.requester).name)}, ${esc(person(r.requester).title)} · ${stamp(r.created)}</p></div>${ext ? `<span class="tag ext">${esc(extStatus(r))}</span>` : `<span class="pill ${cls}">${label}</span>`}</div>
+  ${ext ? `<div class="ext-banner"><b>External view.</b> ${esc(me().company)} sees the status and the messages shared with them. Approver names, internal notes and bank or credit details are not shown here.</div>` : ''}
+  <div class="detail"><div class="section">
+    ${showFields ? `<div class="panel"><h3>Request details</h3><dl class="fields">${canEdit ? editableFields(r) : defs.map(f => `<dt>${esc(f.label)}</dt><dd>${fieldValue(r, f)}</dd>`).join('')}
+      ${r.fields.dupNote ? `<dt>Duplicate override</dt><dd>${esc(r.fields.dupNote)}</dd>` : ''}${linkedConv ? `<dt>Raised from</dt><dd><button class="linkish" data-act="open" data-id="${linkedConv.id}">${linkedConv.id}</button> · ${esc(linkedConv.subject)}</dd>` : ''}</dl></div>` : ''}
+    <div class="panel"><h3>Conversation</h3><div class="thread">${msgs.length ? msgs.map(m => msgHtml(m, r)).join('') : '<p class="muted" style="margin:0">No messages yet.</p>'}</div>${composer(r)}</div>
+  </div>
+  <aside class="section">
+    ${decisionHtml(r)}
+    ${ext ? '' : `<div class="panel"><h3>Where it stands</h3>${stepsHtml(r)}${(r.state === 'open') && !onMe(r) && waitingOn(r) ? `<div><button class="btn small" data-act="nudge" data-id="${r.id}">Nudge ${esc(waitingOn(r).who ? waitingOn(r).who.name : '')}</button></div>` : ''}</div>`}
+    ${ext ? '' : auditHtml(r)}
+  </aside></div>`;
+}
+function auditHtml(r) {
+  return `<div class="panel"><h3>Audit trail</h3><ul class="audit">${r.audit.slice().reverse().map(a => `<li><time class="mono">${stamp(a.at)}</time><span><b>${esc(a.by === 'system' ? 'System' : person(a.by).name)}</b> ${esc(a.text)}</span></li>`).join('')}</ul><p class="muted" style="margin:0;font-size:12px">Append-only. Every approval, change and view of restricted fields is recorded with who and when.</p></div>`;
+}
+
+function viewMaster() {
+  const q = ui.mq || '';
+  const rows = S.records.filter(r => !q || r.name.toLowerCase().includes(q.toLowerCase()) || r.code.toLowerCase().includes(q.toLowerCase()) || dice(q, r.name) >= 0.6)
+    .sort((a, b) => b.created - a.created);
+  return `<div class="head"><div><h2>SAP B1 master records</h2><p>A read-only mirror of Business Partners, Items and Cost Centers. Searching here and in the request form uses fuzzy matching, so "Natl Univ Hosp" still finds National University Hospital.</p></div></div>
+  <input type="text" id="mq" placeholder="Search by name or code" value="${esc(q)}" style="max-width:360px">
+  <div class="tablewrap"><table><thead><tr><th>Code</th><th>Type</th><th>Name</th><th>Entity</th><th>Country</th><th>Created</th></tr></thead><tbody>
+  ${rows.map(r => `<tr><td class="mono">${esc(r.code)}</td><td>${esc(r.type)}</td><td>${esc(r.name)}</td><td>${esc(r.entity)}</td><td>${esc(COUNTRIES[r.country] || r.country)}</td><td class="muted">${rel(r.created)}</td></tr>`).join('') || '<tr><td colspan="6" class="muted">No records match.</td></tr>'}
+  </tbody></table></div>`;
+}
+
+function viewRules() {
+  const canEdit = has('MDM');
+  const dn = ui.ruleDomain, dom = S.config.domains[dn];
+  const tabs = Object.keys(S.config.domains).map(k => `<button aria-pressed="${k === dn}" data-act="ruledom" data-d="${k}">${k}</button>`).join('');
+  const dis = canEdit ? '' : 'disabled';
+  return `<div class="head"><div><h2>Forms &amp; approval rules</h2><p>The MDM team changes required fields and approval steps here, without IT. A new business unit or regulatory step is a five-minute change, and everyone sees the new form and route immediately.</p></div></div>
+  ${canEdit ? '' : `<div class="callout info"><p>Only the MDM team can change these rules. Switch to Priya to try it.</p></div>`}
+  <div class="seg" role="group" aria-label="Record type">${tabs}</div>
+  <div class="detail"><div class="panel"><h3>Fields on the ${esc(dn)} form</h3>
+    <div class="tablewrap"><table><thead><tr><th>Field</th><th>Required</th><th>Restricted</th><th></th></tr></thead><tbody>
+    ${dom.fields.map((f, i) => `<tr><td>${esc(f.label)}</td><td><input type="checkbox" aria-label="Required" data-act="freq" data-i="${i}" ${f.req ? 'checked' : ''} ${dis || (f.k === 'name' ? 'disabled' : '')}></td><td><input type="checkbox" aria-label="Restricted" data-act="fsens" data-i="${i}" ${f.sensitive ? 'checked' : ''} ${dis}></td><td>${f.k === 'name' ? '' : `<button class="btn small danger" data-act="fdel" data-i="${i}" ${dis}>Remove</button>`}</td></tr>`).join('')}
+    </tbody></table></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><input type="text" id="newfield" placeholder="New field, e.g. Cold-chain storage temp" style="flex:1;min-width:180px" ${dis}><button class="btn" data-act="fadd" ${dis}>Add field</button></div>
+  </div>
+  <aside class="section"><div class="panel"><h3>Approval route</h3><div class="chain">
+    ${dom.chain.map((r, i) => `<div class="link"><span class="mono muted">${i + 1}</span><b>${esc(r)}</b><span class="muted" style="font-size:12px">${esc((holderOf(r) || {}).name || '')}</span><button class="btn small" data-act="cup" data-i="${i}" ${dis || (i === 0 ? 'disabled' : '')} aria-label="Move up">↑</button><button class="btn small danger" data-act="cdel" data-i="${i}" ${dis || (dom.chain.length < 2 ? 'disabled' : '')} aria-label="Remove step">✕</button></div>`).join('')}
+    <div class="link" style="background:var(--sunken)"><span class="mono muted">${dom.chain.length + 1}</span><b>MDM check &amp; create in SAP B1</b><span class="muted" style="font-size:12px">always last</span></div></div>
+    <div style="display:flex;gap:8px"><select id="addstep" style="flex:1" ${dis}>${ROLES.filter(r => r !== 'MDM' && !dom.chain.includes(r)).map(r => `<option>${esc(r)}</option>`).join('')}</select><button class="btn" data-act="cadd" ${dis}>Add step</button></div>
+    <p class="muted" style="margin:0;font-size:12.5px">Changes apply to new requests. Requests already in flight keep the route they started with.</p></div>
+    <div class="panel"><h3>Change history · v${S.config.version}</h3><ul class="audit">${S.configLog.slice().reverse().map(a => `<li><time class="mono">${stamp(a.at)}</time><span><b>${esc(person(a.by).name)}</b> ${esc(a.text)}</span></li>`).join('')}</ul></div>
+  </aside></div>`;
+}
+
+/* ---------- actions ---------- */
+function goto(view) { if (view !== 'detail') ui.from = view; ui.view = view; ui.sel = view === 'detail' ? ui.sel : null; render(); window.scrollTo(0, 0); }
+function open(id) { if (ui.view !== 'detail') ui.from = ui.view; ui.sel = id; ui.view = 'detail'; render(); window.scrollTo(0, 0); }
+function cfgChange(text) { S.config.version++; S.configLog.push({ at: Date.now(), by: ui.persona, text }); }
+function noteOf(id) { const el = document.getElementById('dec-' + id); return el ? el.value.trim() : ''; }
+
+function approve(r) {
+  const c = current(r), note = noteOf(r.id);
+  c.status = 'done'; c.by = ui.persona; c.at = Date.now();
+  if (note) r.messages.push({ by: ui.persona, at: Date.now(), vis: 'int', text: note });
+  const i = r.steps.indexOf(c);
+  if (c.role === 'MDM') {
+    const pre = SAP_PREFIX[r.domain];
+    const nums = S.records.filter(x => x.type === r.domain && /^\w\d+$/.test(x.code)).map(x => +x.code.slice(1));
+    r.sapCode = r.domain === 'Cost Center' ? 'CC-' + r.entity + '-' + r.country + '-' + (S.records.length + 1) : pre + (Math.max(10000, ...nums) + 1);
+    S.records.push({ code: r.sapCode, type: r.domain, name: r.fields.name, entity: r.entity, country: r.fields.country || r.country, created: Date.now() });
+    r.state = 'done'; r.closed = Date.now();
+    audit(r, 'Created in SAP B1 as ' + r.sapCode);
+    r.messages.push({ by: 'system', at: Date.now(), vis: 'int', text: `${person(r.requester).name} notified in Teams: ${r.fields.name} is live in SAP B1 as ${r.sapCode}.` });
+    if (r.party) r.messages.push({ by: 'system', at: Date.now(), vis: 'ext', text: 'Your details are approved and set up with Lives Group.' });
+    const conv = S.requests.find(x => x.linked === r.id);
+    if (conv) { conv.messages.push({ by: 'system', at: Date.now(), vis: 'int', text: `Customer setup complete (${r.sapCode}). The order can now be entered in SAP B1.` }); conv.cls.knownCode = r.sapCode; audit(conv, 'Linked customer created as ' + r.sapCode, 'system'); }
+    toast('Created in SAP B1 as ' + r.sapCode);
+  } else {
+    const next = r.steps[i + 1]; next.status = 'current'; next.since = Date.now();
+    audit(r, 'Approved ' + c.role + ' step' + (note ? ': "' + note + '"' : ''));
+    const h = holderOf(next.role);
+    r.messages.push({ by: 'system', at: Date.now(), vis: 'int', text: `${h ? h.name : next.role} notified in Teams: request is now with ${next.role}.` });
+    toast('Approved. Sent to ' + (h ? h.name : next.role));
+  }
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
+  const act = b.dataset.act, r = b.dataset.id ? req(b.dataset.id) : null;
+  if (b.tagName === 'INPUT' && b.type === 'checkbox') return; // handled on change
+  switch (act) {
+    case 'nav': goto(b.dataset.view); break;
+    case 'open': open(b.dataset.id); break;
+    case 'reset': S = seed(); ui.draft = null; ui.revealed = {}; ui.view = 'work'; ui.sel = null; render(); toast('Demo data restored'); break;
+    case 'filter': ui.filter = b.dataset.f; render(); break;
+    case 'domain': ui.draft = newDraft(b.dataset.d); render(); break;
+    case 'vis': ui.vis[r.id] = b.dataset.v; render(); break;
+    case 'reveal':
+      ui.revealed[r.id + ':' + b.dataset.k] = true;
+      audit(r, 'Viewed restricted field "' + r.defs.find(f => f.k === b.dataset.k).label + '"'); render(); break;
+    case 'post': {
+      const ta = document.getElementById('reply-' + r.id), text = ta.value.trim();
+      if (!text) { ta.focus(); return; }
+      const vis = isExt() ? 'ext' : (r.party ? (ui.vis[r.id] || (r.kind === 'conv' ? 'ext' : 'int')) : 'int');
+      r.messages.push({ by: ui.persona, at: Date.now(), vis, text });
+      audit(r, isExt() ? 'Message from external party' : vis === 'ext' ? 'Replied to external party' : 'Added internal note');
+      render(); toast(isExt() ? 'Sent to Lives Group' : vis === 'ext' ? 'Sent to ' + person(r.party).company : 'Note added'); break;
+    }
+    case 'approve': approve(r); render(); break;
+    case 'return': case 'reject': {
+      const note = noteOf(r.id); if (!note) { const ta = document.getElementById('dec-' + r.id); ta.focus(); ta.placeholder = 'Add a comment first, so the requester knows what to fix'; return; }
+      const c = current(r);
+      if (act === 'return') { r.state = 'info'; r.returnedBy = ui.persona; r.returnedAt = Date.now(); audit(r, 'Returned for information at ' + c.role + ' step: "' + note + '"'); toast('Returned to ' + person(r.requester).name); }
+      else { c.status = 'rejected'; c.by = ui.persona; c.at = Date.now(); r.state = 'rejected'; r.closed = Date.now(); audit(r, 'Rejected at ' + c.role + ' step: "' + note + '"'); toast('Request rejected'); }
+      r.messages.push({ by: ui.persona, at: Date.now(), vis: 'int', text: note });
+      render(); break;
+    }
+    case 'resubmit': {
+      const changed = [];
+      document.querySelectorAll('[data-edit]').forEach(el => { const k = el.dataset.edit; if ((r.fields[k] || '') !== el.value) { r.fields[k] = el.value; changed.push(r.defs.find(f => f.k === k).label); } });
+      const c = current(r); r.state = 'open'; c.since = Date.now();
+      audit(r, 'Resubmitted' + (changed.length ? '. Changed: ' + changed.join(', ') : ''));
+      r.messages.push({ by: 'system', at: Date.now(), vis: 'int', text: `${(holderOf(c.role) || {}).name || c.role} notified in Teams: request is back with ${c.role}.` });
+      render(); toast('Resubmitted to ' + c.role); break;
+    }
+    case 'nudge': { const w = waitingOn(r); audit(r, 'Sent a reminder to ' + (w.who ? w.who.name : w.role)); r.messages.push({ by: 'system', at: Date.now(), vis: 'int', text: `${me().name} sent a reminder to ${w.who ? w.who.name : w.role} in Teams.` }); render(); toast('Reminder sent'); break; }
+    case 'submit': {
+      const d = ui.draft, cfg = S.config.domains[d.domain];
+      const id = 'MDM-' + (S.seq++);
+      const fields = Object.assign({}, d.fields); if (d.dupOk && d.dupNote.trim()) fields.dupNote = d.dupNote.trim();
+      const steps = cfg.chain.concat(['MDM']).map((role, i) => ({ role, status: i ? 'todo' : 'current', by: null, at: null, since: i ? null : Date.now() }));
+      const dups = similar(fields.name, d.domain);
+      const nr = { id, kind: 'mdm', domain: d.domain, entity: d.entity, country: d.country, requester: ui.persona, created: Date.now(), defs: snapshotDefs(S.config, d.domain), fields, steps, state: 'open', party: d.party || null, messages: [], audit: [] };
+      if (d.note.trim()) nr.messages.push({ by: ui.persona, at: Date.now(), vis: 'int', text: d.note.trim() });
+      const h = holderOf(steps[0].role);
+      nr.messages.push({ by: 'system', at: Date.now(), vis: 'int', text: `${h ? h.name : steps[0].role} notified in Teams: new ${d.domain.toLowerCase()} request waiting for ${steps[0].role} approval.` });
+      audit(nr, 'Submitted. Duplicate check: ' + (dups.length ? dups.length + ' similar record(s) shown' + (fields.dupNote ? ', overridden with reason' : '') : 'no similar records'));
+      if (d.fromConv) { const conv = req(d.fromConv); conv.linked = id; audit(conv, 'Customer setup started: ' + id); conv.messages.push({ by: 'system', at: Date.now(), vis: 'int', text: `Customer setup ${id} started by ${me().name}.` }); }
+      S.requests.unshift(nr); ui.draft = null; ui.from = 'work'; open(id); toast('Submitted. ' + (h ? h.name : steps[0].role) + ' has been notified'); break;
+    }
+    case 'setup': {
+      const p = person(r.party);
+      ui.draft = newDraft('Customer'); Object.assign(ui.draft, { entity: 'SPD', country: p.country, fromConv: r.id, party: r.party, note: `Raised from customer message ${r.id}: ${r.subject}` });
+      ui.draft.fields = { name: p.company, country: p.country, contact: '' };
+      if (!me().roles.includes('Requestor')) { /* sales staff can raise setup on behalf of the customer */ }
+      ui.view = 'new'; ui.from = 'inbound'; render(); window.scrollTo(0, 0); toast('Form pre-filled from the customer message'); break;
+    }
+    case 'handled': r.state = 'done'; r.closed = Date.now(); audit(r, 'Marked handled'); render(); toast('Marked handled'); break;
+    case 'reclass': r.cls.kind = r.cls.kind === 'po' ? 'enquiry' : 'po'; r.cls.reasons = ['reclassified by ' + me().name]; audit(r, 'Reclassified as ' + (r.cls.kind === 'po' ? 'purchase order' : 'enquiry')); render(); break;
+    case 'send-ext': {
+      const s = document.getElementById('x-subject').value.trim(), t = document.getElementById('x-text').value.trim();
+      if (!t) { document.getElementById('x-text').focus(); return; }
+      const p = me(), id = 'MSG-' + (S.cseq++);
+      const c = { id, kind: 'conv', party: p.id, requester: p.id, created: Date.now(), country: p.country, subject: s || t.slice(0, 60), text: t, cls: classify(s + '\n' + t, p.company), assigned: 'Sales', state: 'open', messages: [], audit: [{ at: Date.now(), by: p.id, text: 'Message received from external portal' }] };
+      c.messages.push({ by: 'system', at: Date.now(), vis: 'int', text: `Auto-tagged as ${c.cls.kind === 'po' ? 'purchase order' : 'enquiry'}. ${holderOf('Sales').name} notified in Teams.` });
+      S.requests.unshift(c); ui.from = 'work'; open(id); toast('Sent. Lives Group has been notified'); break;
+    }
+    case 'ruledom': ui.ruleDomain = b.dataset.d; render(); break;
+    case 'fdel': { const dom = S.config.domains[ui.ruleDomain], f = dom.fields[+b.dataset.i]; dom.fields.splice(+b.dataset.i, 1); cfgChange(`Removed "${f.label}" from ${ui.ruleDomain}`); render(); toast('Field removed'); break; }
+    case 'fadd': {
+      const el = document.getElementById('newfield'), label = el.value.trim(); if (!label) { el.focus(); return; }
+      const dom = S.config.domains[ui.ruleDomain];
+      dom.fields.push({ k: 'x' + Date.now().toString(36), label, req: true, sensitive: false, type: 'text' });
+      cfgChange(`Added "${label}" as required for ${ui.ruleDomain}`); render(); toast('Field added. New requests will ask for it'); break;
+    }
+    case 'cup': { const ch = S.config.domains[ui.ruleDomain].chain, i = +b.dataset.i; [ch[i - 1], ch[i]] = [ch[i], ch[i - 1]]; cfgChange(`Moved ${ch[i - 1]} before ${ch[i]} on ${ui.ruleDomain} route`); render(); break; }
+    case 'cdel': { const ch = S.config.domains[ui.ruleDomain].chain, [x] = ch.splice(+b.dataset.i, 1); cfgChange(`Removed ${x} from ${ui.ruleDomain} route`); render(); toast('Step removed'); break; }
+    case 'cadd': { const v = document.getElementById('addstep').value; if (!v) return; S.config.domains[ui.ruleDomain].chain.push(v); cfgChange(`Added ${v} to ${ui.ruleDomain} route`); render(); toast(v + ' added to the route'); break; }
+  }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.id === 'persona') { ui.persona = t.value; ui.view = 'work'; ui.sel = null; ui.from = 'work'; render(); return; }
+  if (t.dataset.act === 'freq' || t.dataset.act === 'fsens') {
+    const f = S.config.domains[ui.ruleDomain].fields[+t.dataset.i];
+    if (t.dataset.act === 'freq') { f.req = t.checked; cfgChange(`Made "${f.label}" ${t.checked ? 'required' : 'optional'} for ${ui.ruleDomain}`); }
+    else { f.sensitive = t.checked; cfgChange(`Made "${f.label}" ${t.checked ? 'restricted' : 'unrestricted'} for ${ui.ruleDomain}`); }
+    render(); return;
+  }
+  if (t.id === 'dup-ok') { ui.draft.dupOk = t.checked; updateNewSide(); return; }
+  if ((t.dataset.field || t.dataset.meta) && t.tagName === 'SELECT') onDraftInput(t);
+});
+function onDraftInput(t) {
+  if (!ui.draft) return;
+  if (t.dataset.field) ui.draft.fields[t.dataset.field] = t.value;
+  else if (t.dataset.meta) ui.draft[t.dataset.meta] = t.value;
+  if (t.dataset.meta !== 'note') updateNewSide();
+}
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.field || t.dataset.meta) onDraftInput(t);
+  else if (t.id === 'dup-note') { ui.draft.dupNote = t.value; const keep = t.selectionStart; updateNewSide(); const n = document.getElementById('dup-note'); n.focus(); n.setSelectionRange(keep, keep); }
+  else if (t.id === 'x-subject' || t.id === 'x-text') updateSendPreview();
+  else if (t.id === 'mq') { ui.mq = t.value; const pos = t.selectionStart; render(); const n = document.getElementById('mq'); n.focus(); n.setSelectionRange(pos, pos); }
+});
+
+render();
+})();
+</script>
+
+</body>
+</html>
