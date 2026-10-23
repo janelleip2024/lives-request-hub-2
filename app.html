@@ -14,6 +14,7 @@
   --font-ui: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --r: 8px;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --pos: #2a78d6; --neg: #e34948; --grid: #e6ebe8; --axis: #c3cbc7;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #0e1412; --surface: #151d1a; --sunken: #1c2622; --line: #2a3632;
@@ -21,6 +22,7 @@
   --accent: #46c4a3; --accent-fg: #052219; --accent-soft: #163a31;
   --ext: #b896ea; --ext-soft: #2a2140;
   --warn: #e6a74c; --warn-soft: #3a2b13; --bad: #f0897f; --bad-soft: #3d1c19; --ok: #72d093; --ok-soft: #163222;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --pos: #3987e5; --neg: #e66767; --grid: #24302c; --axis: #3a4843;
   color-scheme: dark; } }
 :root[data-theme="dark"] {
   --bg: #0e1412; --surface: #151d1a; --sunken: #1c2622; --line: #2a3632;
@@ -28,6 +30,7 @@
   --accent: #46c4a3; --accent-fg: #052219; --accent-soft: #163a31;
   --ext: #b896ea; --ext-soft: #2a2140;
   --warn: #e6a74c; --warn-soft: #3a2b13; --bad: #f0897f; --bad-soft: #3d1c19; --ok: #72d093; --ok-soft: #163222;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --pos: #3987e5; --neg: #e66767; --grid: #24302c; --axis: #3a4843;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -180,6 +183,119 @@ th { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: upp
 .ext-banner { background: var(--ext-soft); color: var(--fg); border-radius: var(--r); padding: 10px 14px; font-size: 13px; }
 .ext-banner b { color: var(--ext); }
 
+
+/* Teams card (simulated notification) */
+.teams { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 360px; max-width: calc(100% - 32px); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.18); z-index: 30; overflow: hidden; animation: tin .25s ease-out; --tm: #5b5fc7; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .teams { --tm: #7f85f5; } }
+:root[data-theme="dark"] .teams { --tm: #7f85f5; }
+@keyframes tin { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+.t-top { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+.t-logo { width: 20px; height: 20px; border-radius: 5px; background: var(--tm); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 12px; }
+.t-meta { color: var(--muted); margin-right: auto; }
+.t-x { border: 0; background: none; cursor: pointer; color: var(--muted); padding: 2px 6px; }
+.t-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; border-left: 4px solid var(--tm); }
+.t-to { font-size: 12px; color: var(--muted); }
+.t-title { font-size: 14px; }
+.t-name { font-weight: 600; }
+.t-facts { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 3px 12px; margin: 0; font-size: 12.5px; }
+.t-facts dt { color: var(--muted); } .t-facts dd { margin: 0; overflow-wrap: anywhere; }
+.t-alert { font-size: 12.5px; font-weight: 600; color: var(--bad); }
+.t-note, .t-text { font-size: 12.5px; color: var(--muted); margin: 0; }
+.t-body textarea { min-height: 44px; font-size: 13px; }
+.t-acts { display: flex; gap: 6px; flex-wrap: wrap; }
+.teams .btn.primary { background: var(--tm); border-color: var(--tm); color: #fff; }
+/* SAP B1 handoff */
+pre.code { margin: 0; padding: 10px 12px; background: var(--sunken); border-radius: 6px; font-family: var(--font-mono); font-size: 12px; line-height: 1.45; overflow-x: auto; white-space: pre; }
+/* Email intake */
+.intake { border-color: var(--ext); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.field.ai input, .field.ai select { border-color: var(--ext); background: var(--ext-soft); }
+.aitag { font-size: 11px; font-weight: 600; color: var(--ext); margin-left: 6px; }
+/* Business case calculator */
+.wi { gap: 14px; }
+.wi-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; font-size: 13px; }
+.wi-row b { font-variant-numeric: tabular-nums; }
+.wi-row input { grid-column: 1 / -1; width: 100%; accent-color: var(--s1); }
+.wi-big { font-size: 30px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+/* Amy's story */
+.story-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+.story-h { display: flex; justify-content: space-between; align-items: baseline; font-size: 15px; }
+.story-bar { height: 8px; background: var(--sunken); border-radius: 4px; overflow: hidden; }
+.story-bar i { display: block; height: 100%; border-radius: 4px; }
+.story-bar i.bad, .story-end.bad { background: var(--bad); } .story-bar i.good, .story-end.good { background: var(--ok); }
+.story { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.story li { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 10px; transition: opacity .3s; padding-left: 8px; border-left: 3px solid var(--line); }
+.story li.bad { border-left-color: var(--bad); } .story li.good { border-left-color: var(--ok); } .story li.warn { border-left-color: var(--warn); }
+.story li p { margin: 0; }
+.story li span { color: var(--muted); padding-top: 1px; }
+.story .pending, .story-end.pending { opacity: .12; }
+.story-end { color: #fff; font-weight: 600; padding: 10px 12px; border-radius: 6px; transition: opacity .3s; }
+@media (max-width: 760px) { .story-grid { grid-template-columns: minmax(0, 1fr); } }
+/* Surprise moments: finish date, stuck orders, account history, cleanup toggle */
+.eta { display: flex; flex-direction: column; gap: 1px; padding: 10px 12px; border-radius: var(--r); background: var(--accent-soft); }
+.eta b { font-size: 18px; }
+.eta span { font-size: 12.5px; }
+.row .right .late { color: var(--warn); font-weight: 600; }
+.money { display: block; font-size: 12.5px; margin-top: 2px; }
+.stuck { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: flex-start; padding: 14px 16px; border-radius: var(--r); background: var(--bad-soft); }
+.stuck > div:first-child { display: flex; flex-direction: column; }
+.stuck > div:first-child b { font-size: 24px; color: var(--bad); line-height: 1.2; }
+.stuck-list { display: flex; flex-direction: column; gap: 4px; font-size: 13px; flex: 1; min-width: 220px; }
+tr.gone td { background: var(--sunken); color: var(--muted); }
+tr.gone .nm, tr.gone td:last-child b { text-decoration: line-through; }
+tr.gone polyline { stroke: var(--muted); }
+tr.gone .why { font-size: 12px; color: var(--ok); font-weight: 600; margin-top: 2px; }
+tr.sub td { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); background: var(--surface); }
+/* Regional business view */
+.sim { background: var(--warn-soft); color: var(--warn); }
+.matrix { min-width: 560px; }
+.matrix th, .matrix td { text-align: right; }
+.matrix th:first-child, .matrix td:first-child { text-align: left; }
+.matrix td.c { padding: 3px; }
+.matrix .cellbtn { width: 100%; border: 1px solid transparent; border-radius: 6px; padding: 6px 8px; cursor: pointer; text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 1px; background: var(--surface); }
+.matrix .cellbtn:hover { border-color: var(--muted); }
+.matrix .cellbtn[aria-pressed=true] { border-color: var(--fg); box-shadow: inset 0 0 0 1px var(--fg); }
+.matrix .cellbtn b { font-size: 14px; font-variant-numeric: tabular-nums; }
+.matrix .cellbtn span { font-size: 12px; font-variant-numeric: tabular-nums; }
+.matrix tr.total td { border-bottom: 0; }
+.scale { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+.scale i { width: 22px; height: 10px; border-radius: 2px; display: inline-block; }
+.chart { position: relative; min-height: 270px; }
+.chart svg { display: block; width: 100%; overflow: visible; }
+.chart text { font-family: var(--font-ui); font-size: 11px; fill: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--muted); align-items: center; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 16px; height: 0; border-top: 2px solid; display: inline-block; }
+.sw.dash { border-top-style: dashed; }
+.sw.box { height: 10px; border: 0; border-radius: 2px; width: 10px; }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; font-size: 12.5px; box-shadow: 0 4px 14px rgba(0,0,0,.12); min-width: 170px; z-index: 5; }
+.tip b { display: block; margin-bottom: 3px; }
+.tip div { display: flex; justify-content: space-between; gap: 14px; font-variant-numeric: tabular-nums; }
+.hbars { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.hbars li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; font-size: 13px; }
+.hbars .bar { grid-column: 1 / -1; height: 8px; background: var(--sunken); border-radius: 4px; overflow: hidden; }
+.hbars .bar i { display: block; height: 100%; border-radius: 0 4px 4px 0; background: var(--muted); }
+.hbars li.hi .bar i { background: var(--s1); }
+.hbars li.hi { font-weight: 600; }
+.acts4 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.act { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.act .who { margin: 0; padding: 0; background: none; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+.act b { font-size: 15px; }
+.act p { margin: 0; color: var(--muted); }
+.act .num { font-size: 13px; font-weight: 600; color: var(--fg); }
+.stack { display: flex; gap: 2px; height: 12px; min-width: 140px; }
+.stack i { display: block; height: 100%; border-radius: 2px; }
+.ba { display: grid; grid-template-columns: minmax(0, 1fr) 110px 110px; }
+.ba > div { padding: 9px 10px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.ba > div:nth-child(3n+2), .ba > div:nth-child(3n) { text-align: right; }
+.ba .h { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+.ba .bad { color: var(--bad); font-size: 12px; display: block; }
+.spark { display: block; }
+details.method summary { cursor: pointer; font-weight: 600; }
+details.method ul { margin: 8px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; color: var(--muted); }
+.live { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-size: 13px; }
+@media (max-width: 760px) { .acts4 { grid-template-columns: minmax(0, 1fr); } .ba { grid-template-columns: minmax(0, 1fr) 84px 84px; } }
+
 @media (max-width: 980px) {
   .detail, .form { grid-template-columns: minmax(0, 1fr); }
   .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -207,6 +323,7 @@ th { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: upp
   <main id="main" aria-live="polite"></main>
 </div>
 <div class="toast" id="toast" hidden></div>
+<aside class="teams" id="teams" aria-live="polite" aria-label="Teams notification (simulated)" hidden></aside>
 
 <script>
 (function () {
@@ -270,10 +387,14 @@ function dice(a, b) {
   A.forEach((v, g) => { if (B.has(g)) hit += Math.min(v, B.get(g)); });
   return total ? (2 * hit) / total : 0;
 }
-function similar(name, domain, excludeId) {
-  if (!norm(name)) return [];
+const normTax = v => String(v || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+function similar(name, domain, excludeId, taxId) {
   const out = [];
-  S.records.filter(r => r.type === domain).forEach(r => {
+  /* Exact tax / registration number match: catches acronyms and renamed entities that names miss */
+  const tx = normTax(taxId);
+  if (tx.length >= 6) S.records.filter(r => r.type === domain && normTax(r.taxId) === tx).forEach(r => out.push({ score: 1, label: r.name, ref: r.code, where: 'In SAP B1 · same tax ID', byTax: true }));
+  if (!norm(name)) return out;
+  S.records.filter(r => r.type === domain && !out.some(o => o.ref === r.code)).forEach(r => {
     const score = dice(name, r.name); if (score >= 0.6) out.push({ score, label: r.name, ref: r.code, where: 'In SAP B1' });
   });
   S.requests.filter(q => q.kind === 'mdm' && q.domain === domain && q.id !== excludeId && q.state !== 'rejected' && q.state !== 'done').forEach(q => {
@@ -316,6 +437,8 @@ function defaultConfig() {
 }
 function snapshotDefs(cfg, domain) { return cfg.domains[domain].fields.map(x => Object.assign({}, x)); }
 
+/* Tax / business registration numbers for the demo SAP B1 mirror (customers match analytics/data/customer_records.csv) */
+const TAX_IDS = { C10012: '223461923D', C10145: '0105337926063', C10230: '201801141754', C10311: '736-114-579-000', C10402: '0390164844', C10233: '201001766906', C10488: '0312345678', V20044: '201012345K', V20051: '200915432M' };
 function seed() {
   const now = Date.now(), t = d => now - d * DAY;
   const cfg = defaultConfig();
@@ -327,7 +450,7 @@ function seed() {
     ['I30101', 'Item', 'Sterile pipette tips 1000µL, 96/rack', 'SPD', 'SG'], ['I30102', 'Item', 'Sterile pipette tips 10µL, 96/rack', 'SPD', 'SG'],
     ['I30210', 'Item', 'Product B reagent kit, 100 tests', 'QTS', 'SG'], ['I30311', 'Item', 'Product C control serum, 5 x 5 mL', 'QTG', 'SG'],
     ['CC-SPD-SLS-SG', 'Cost Center', 'SPD Sales Singapore', 'SPD', 'SG'],
-  ].map(([code, type, name, entity, country]) => ({ code, type, name, entity, country, created: t(200 + Math.random() * 300) }));
+  ].map(([code, type, name, entity, country]) => ({ code, type, name, entity, country, taxId: TAX_IDS[code] || '', created: t(200 + Math.random() * 300) }));
 
   const mk = (o) => Object.assign({ kind: 'mdm', messages: [], audit: [], state: 'open', party: null }, o);
   const step = (role, status, by, at, since) => ({ role, status, by: by || null, at: at || null, since: since || null });
@@ -368,9 +491,9 @@ function seed() {
     messages: [{ by: 'priya', at: t(3.6), vis: 'int', text: 'Created in SAP B1 as C10488. You can raise sales orders now.' }],
     audit: [{ at: t(6.2), by: 'marcus', text: 'Submitted' }, { at: t(5.8), by: 'daniel', text: 'Approved BU Head step' }, { at: t(4.9), by: 'weijie', text: 'Approved Finance step' }, { at: t(4.1), by: 'grace', text: 'Approved Business Support step' }, { at: t(3.6), by: 'priya', text: 'Created in SAP B1 as C10488' }],
   });
-  records.push({ code: 'C10488', type: 'Customer', name: 'Saigon Diagnostics Co.', entity: 'QTS', country: 'VN', created: t(3.6) });
+  records.push({ code: 'C10488', type: 'Customer', name: 'Saigon Diagnostics Co.', entity: 'QTS', country: 'VN', taxId: '0312345678', created: t(3.6) });
 
-  const S0 = { v: 1, seq: 1043, cseq: 209, config: cfg, configLog: [{ at: t(20), by: 'priya', text: 'Added "Regulatory licence no." as required for Items' }], records, requests: [r1041, r1042, r1039, r1036] };
+  const S0 = { v: 2, seq: 1043, cseq: 209, config: cfg, configLog: [{ at: t(20), by: 'priya', text: 'Added "Regulatory licence no." as required for Items' }], records, requests: [r1041, r1042, r1039, r1036] };
   // inbound messages from external parties
   S = S0;
   const conv = (id, party, at, subject, text) => {
@@ -391,7 +514,7 @@ function seed() {
 /* ---------- state ---------- */
 let S = null;
 try { S = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { S = null; }
-if (!S || S.v !== 1) S = seed();
+if (!S || S.v !== 2) S = seed();
 const ui = { persona: 'amy', view: 'work', sel: null, draft: null, filter: 'all', revealed: {}, ruleDomain: 'Customer', vis: {} };
 try { const u = JSON.parse(localStorage.getItem(KEY + '-ui') || 'null'); if (u && person(u.persona).id) Object.assign(ui, { persona: u.persona, view: u.view, sel: u.sel }); } catch (e) {}
 function save() {
@@ -437,6 +560,54 @@ function extStatus(r) {
 }
 function titleOf(r) { return r.kind === 'conv' ? r.subject : r.fields.name; }
 
+/* ---------- expected finish date ----------
+   Typical response per approval step: median working days over the last 90 days of requests (demo history).
+   In production this is recalculated nightly from the audit trail. */
+const TYPICAL = { 'Quality/Regulatory': 0.9, 'BU Head': 3.1, 'Finance': 1.8, 'Business Support': 1.2, 'Procurement': 1.0, 'MDM': 0.6 };
+const EMAIL_BASELINE_DAYS = 18;
+function addWorkDays(ts, days) {
+  let t = ts;
+  while (days > 1e-6) { const step = Math.min(1, days); t += step * DAY; const wd = new Date(t).getDay(); if (wd !== 0 && wd !== 6) days -= step; }
+  return t;
+}
+function workDaysBetween(a, b) { let n = 0; for (let t = a; t < b; t += DAY / 4) { const wd = new Date(t).getDay(); if (wd !== 0 && wd !== 6) n += 0.25; } return n; }
+const fmtDay = ts => new Date(ts).toLocaleDateString('en-SG', { weekday: 'short', day: 'numeric', month: 'short' });
+function eta(r) {
+  if (r.kind !== 'mdm' || (r.state !== 'open' && r.state !== 'info')) return null;
+  const c = current(r); if (!c) return null;
+  const elapsed = c.since ? workDaysBetween(c.since, Date.now()) : 0;
+  const typ = TYPICAL[c.role] || 1;
+  let left = Math.max(typ - elapsed, 0.3) + (r.state === 'info' ? 1 : 0);
+  r.steps.slice(r.steps.indexOf(c) + 1).forEach(st => { left += TYPICAL[st.role] || 1; });
+  const who = holderOf(c.role);
+  return { at: addWorkDays(Date.now(), left), left, role: c.role, who, typ, elapsed, late: r.state === 'open' && elapsed > typ };
+}
+function etaForNew(chain) { const days = chain.reduce((a, role) => a + (TYPICAL[role] || 1), 0); return { at: addWorkDays(Date.now(), days), days }; }
+
+/* ---------- orders waiting on customer setup ----------
+   Value of a purchase order is estimated from the quantities and products the inbox parsed, at assumed average prices. */
+const PRICE_OF = p => ((typeof REGIONAL !== 'undefined' && REGIONAL && REGIONAL.price) || { A: 180, B: 420, C: 95 })[p.slice(-1)] || 0;
+function poValue(c) {
+  const q = (c.qty || []).map(x => parseInt(x.replace(/,/g, ''), 10)).filter(n => n > 0);
+  if (!q.length || !c.products.length) return 0;
+  return q.reduce((a, n, i) => a + n * PRICE_OF(c.products[Math.min(i, c.products.length - 1)]), 0);
+}
+function stuckOrders() {
+  return S.requests.filter(r => r.kind === 'conv' && r.state === 'open' && r.cls.kind === 'po' && !r.cls.knownCode)
+    .map(r => ({ conv: r, value: poValue(r.cls), setup: r.linked ? req(r.linked) : null }));
+}
+const sgdShort = n => 'SGD ' + (n >= 1e6 ? (n / 1e6).toFixed(2).replace(/\.?0+$/, '') + 'M' : n >= 1e3 ? (n / 1e3).toFixed(n >= 1e5 ? 0 : 1).replace(/\.0$/, '') + 'k' : Math.round(n));
+/* Order history for a customer code in SAP B1 (from the regional analysis), so intake can show what a duplicate would split */
+function historyOf(code) {
+  if (typeof REGIONAL === 'undefined' || !REGIONAL || !REGIONAL.accounts) return null;
+  return REGIONAL.accounts[(REGIONAL.record_account || {})[code] || code] || null;
+}
+function historyLine(code) {
+  const h = historyOf(code); if (!h || !h.value) return '';
+  return `<span class="money">Ordered <b>${sgdShort(h.value)}</b> in the last 12 months · ${h.products.map(p => 'Product ' + p).join(', ')} · customer since ${MONTHS_SHORT[+h.since.slice(5, 7) - 1]} ${h.since.slice(0, 4)}</span>`;
+}
+const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 /* ---------- render ---------- */
 const $main = document.getElementById('main');
 const $rail = document.getElementById('rail');
@@ -458,7 +629,7 @@ function renderRail() {
   } else {
     const n = S.requests.filter(r => onMe(r)).length;
     const inbound = S.requests.filter(r => r.kind === 'conv' && r.state === 'open').length;
-    items = [['work', 'My work', n], ['all', 'All requests', 0], ['new', 'New request', 0], ['inbound', 'Customer inbox', inbound], 'sep', ['master', 'SAP B1 records', 0], ['rules', 'Forms & approvals', 0]];
+    items = [['work', 'My work', n], ['all', 'All requests', 0], ['new', 'New request', 0], ['inbound', 'Customer inbox', inbound], 'sep', ['story', 'Amy: email vs hub', 0], ['regional', 'Regional view', 0], ['master', 'SAP B1 records', 0], ['rules', 'Forms & approvals', 0]];
   }
   $rail.innerHTML = items.map(it => it === 'sep' ? '<div class="sep"></div>' :
     `<button data-act="nav" data-view="${it[0]}" aria-current="${ui.view === it[0] || (ui.view === 'detail' && it[0] === ui.from) ? 'true' : 'false'}"><span>${it[1]}</span>${it[2] ? `<span class="count">${it[2]}</span>` : ''}</button>`).join('') +
@@ -475,7 +646,10 @@ function render() {
   else if (v === 'inbound') $main.innerHTML = viewInbound();
   else if (v === 'master') $main.innerHTML = viewMaster();
   else if (v === 'rules') $main.innerHTML = viewRules();
+  else if (v === 'regional') { $main.innerHTML = viewRegional(); drawRegional(); }
+  else if (v === 'story') $main.innerHTML = viewStory();
   else $main.innerHTML = viewWork();
+  renderTeams();
   save();
 }
 
@@ -490,6 +664,7 @@ function row(r) {
   let right = isExt() ? `<span>${esc(extStatus(r))}</span>` : `<span class="pill ${cls}">${label}</span>`;
   if (!isExt() && w && r.kind !== 'conv') right += `<span>${w.role === 'Requestor' ? 'with requester' : 'with ' + esc(w.role)}${age ? ' · ' + dur(age) : ''}</span>`;
   if (!isExt() && age && age > 2 * DAY) right += `<span class="tag warn">Reminder sent</span>`;
+  if (!isExt()) { const e = eta(r); if (e) right += `<span class="${e.late ? 'late' : ''}">Est. in SAP B1 ${fmtDay(e.at)}</span>`; }
   if (r.state === 'done' && r.sapCode) right += `<span class="mono">${esc(r.sapCode)}</span>`;
   return `<button class="row" data-act="open" data-id="${r.id}"><span class="mono muted">${r.id}</span><span style="min-width:0"><span class="t">${esc(titleOf(r))}</span><span class="meta">${kindTag}<span>${who}</span><span>· ${rel(r.created)}</span></span></span><span class="right">${right}</span></button>`;
 }
@@ -517,7 +692,10 @@ function viewAll() {
   const f = ui.filter;
   const shown = reqs.filter(r => f === 'all' || (f === 'open' && r.state === 'open') || (f === 'info' && r.state === 'info') || (f === 'done' && r.state === 'done'));
   const fb = (k, l) => `<button aria-pressed="${f === k}" data-act="filter" data-f="${k}">${l}</button>`;
+  const stuck2 = stuckOrders(), stuckV = stuck2.reduce((a, x) => a + x.value, 0);
+  const stuckHtml = stuck2.length ? `<div class="stuck"><div><span class="muted">Customer orders stuck waiting on setup</span><b>${sgdShort(stuckV)}</b></div><div class="stuck-list">${stuck2.map(x => `<div><button class="linkish" data-act="open" data-id="${x.conv.id}">${x.conv.id}</button> ${esc(person(x.conv.party).company)} · ${sgdShort(x.value)} · ${x.setup ? `setup <button class="linkish" data-act="open" data-id="${x.setup.id}">${x.setup.id}</button> ${esc(stateInfo(x.setup)[1].toLowerCase())}${eta(x.setup) ? ', expected ' + fmtDay(eta(x.setup).at) : ''}` : '<b>no setup started</b>'}</div>`).join('')}</div></div>` : '';
   return `<div class="head"><div><h2>All master data requests</h2><p>Everyone can see where every request stands, so nobody has to email to ask.</p></div></div>
+  ${stuckHtml}
   <div class="stats">
     <div class="stat"><b>${open.length}</b><span>open requests</span></div>
     <div class="stat"><b>${stuck.length}</b><span>waiting over 48h (auto-reminded)</span></div>
@@ -572,6 +750,50 @@ function updateSendPreview() {
 function newDraft(domain) {
   return { domain, entity: 'SPD', country: 'SG', fields: {}, dupOk: false, dupNote: '', note: '' };
 }
+/* ---------- email intake ----------
+   Paste a requester's email and the form fills itself. In production this is an LLM call (e.g. Azure OpenAI inside
+   Microsoft 365) returning the form's fields as JSON. This prototype ships pre-extracted results for the three example
+   emails and simple pattern rules for anything else, so it works offline and never needs an API key in the browser. */
+const INTAKE_EXAMPLES = [
+  { label: 'Sales: new hospital lab account', text: `Hey team, can we open an account for Klang Valley Pathology Laboratory Sdn Bhd? They're in Klang, Selangor (No. 8 Jalan Kapar, 41400 Klang). Reg no 201801141754. Terms: Net 30, they asked for a MYR 40k limit. Billing contact accounts@kvpath.example. Need it this week, first PO is coming.\n- Marcus`,
+    result: { domain: 'Customer', entity: 'QTG', country: 'MY', fields: { name: 'Klang Valley Pathology Laboratory Sdn Bhd', country: 'MY', address: 'No. 8 Jalan Kapar, 41400 Klang, Selangor', taxId: '201801141754', creditTerms: 'Net 30, limit MYR 40,000', contact: 'accounts@kvpath.example' }, notes: ['Urgency: "first PO is coming" added to the note for approvers.'], note: 'Needed this week: first purchase order is on its way.' } },
+  { label: "Amy: new lab consumable", text: `Hi, need a new item code for the 2mL cryovials we're importing from Meridian, box of 500, sterile, goes under Product C. HS 3923.30. Not sure about the licence, I think it's Class A? Shipment lands 6 Nov so need it before then pls.\nThanks, Amy`,
+    result: { domain: 'Item', entity: 'SPD', country: 'SG', fields: { name: 'Cryogenic vials 2 mL, sterile, box of 500', productLine: 'Product C', uom: 'Box of 500', hsCode: '3923.30', supplier: 'Meridian BioSupplies Pte Ltd', licence: '' }, notes: ['Licence left empty: "I think it\'s Class A" is a device class, not a licence number. The form will not submit until it is filled.', 'Supplier "Meridian" matched to vendor V20044.'], note: 'Shipment lands 6 Nov; needed before then.' } },
+  { label: 'Procurement: new supplier', text: `Pls add supplier Siam LabTech Co., Ltd., 55 Sukhumvit Soi 21, Bangkok 10110. Tax ID 0105561234567. Bank: Bangkok Bank 123-4-56789-0. Payment 45 days. Contact somchai@siamlabtech.example\nGrace`,
+    result: { domain: 'Vendor', entity: 'SPD', country: 'TH', fields: { name: 'Siam LabTech Co., Ltd.', country: 'TH', address: '55 Sukhumvit Soi 21, Bangkok 10110', bank: 'Bangkok Bank 123-4-56789-0', paymentTerms: 'Net 45', contact: 'somchai@siamlabtech.example' }, notes: ['Bank account moved into a restricted field. It is no longer sitting in an email thread.', 'Tax ID found but the Vendor form has no tax field. MDM can add one in Forms & approvals.'], note: '' } },
+];
+const CTRY_WORDS = [['SG', /singapore/i], ['MY', /malaysia|selangor|penang|johor|klang|kuala lumpur|sabah|sarawak/i], ['TH', /thailand|bangkok|chiang mai|phuket/i], ['VN', /vietnam|viet nam|hanoi|saigon|ho chi minh|da nang/i], ['PH', /philippines|manila|cebu|davao|makati|quezon/i]];
+function extractEmail(text) {
+  const ex = INTAKE_EXAMPLES.find(x => x.text.trim() === text.trim());
+  if (ex) return Object.assign({ source: 'model' }, JSON.parse(JSON.stringify(ex.result)));
+  const t = text, f = {}, notes = [];
+  const domain = /supplier|vendor/i.test(t) ? 'Vendor' : /item code|sku|new product|consumable|reagent|catalog/i.test(t) ? 'Item' : /cost cent(er|re)/i.test(t) ? 'Cost Center' : 'Customer';
+  const nameRes = [/(?:account|acct) for\s+([A-Z0-9][^,?\n(]{3,70}?)(?=\s+in\s|[,.?\n(]|$)/i, /(?:add supplier|supplier:|customer:|new supplier)\s+([A-Z0-9][^,?\n(]{3,70}?)(?=[,?\n(]|$)/i, /item code for (?:the )?([^,.?\n(]{3,70})/i];
+  for (const re of nameRes) { const m = t.match(re); if (m) { f.name = m[1].trim().replace(/\.$/, ''); break; } }
+  const email = t.match(/[\w.+-]+@[\w-]+\.[\w.]+/); if (email) f.contact = email[0];
+  const c = CTRY_WORDS.find(([, re]) => re.test(t)); if (c) f.country = c[0];
+  const days = t.match(/(\d{2,3})\s*days|net\s*(\d{2,3})/i); if (days) { const n = days[1] || days[2]; if (domain === 'Vendor') f.paymentTerms = 'Net ' + n; else f.creditTerms = 'Net ' + n; }
+  const tax = t.match(/(?:reg(?:istration)?\.?\s*no\.?|ssm|uen|tax id|tin)\s*[:#]?\s*([A-Z0-9-]{6,})/i); if (tax && domain === 'Customer') f.taxId = tax[1];
+  const bank = t.match(/bank:?\s*([^\n.]*\d[\d-]{5,})/i); if (bank && domain === 'Vendor') f.bank = bank[1].trim();
+  const addr = t.match(/\(?((?:No\.\s*)?\d+[^()\n]{8,80}\d{5})\)?/); if (addr) f.address = addr[1].trim();
+  notes.push('Read with pattern rules (offline fallback). The production version uses an LLM for free-form emails.');
+  return { source: 'rules', domain, entity: 'SPD', country: f.country || 'SG', fields: f, notes, note: '' };
+}
+function applyIntake(x) {
+  const d = newDraft(x.domain);
+  Object.assign(d, { entity: x.entity, country: x.country, note: x.note || '', fields: x.fields });
+  d.ai = { keys: Object.keys(x.fields).filter(k => x.fields[k]), notes: x.notes || [], source: x.source };
+  ui.draft = d; ui.intake = false; render();
+  toast('Filled ' + d.ai.keys.length + ' fields from the email');
+}
+function intakePanel() {
+  if (!ui.intake) return '';
+  return `<div class="panel intake"><h3>Start from an email</h3>
+    <p class="muted" style="margin:0">Paste the email you would have sent to the MDM mailbox. The hub reads it, picks the record type and fills the form. You check it before submitting.</p>
+    <div class="chips">${INTAKE_EXAMPLES.map((e, i) => `<button class="btn small" data-act="intake-ex" data-i="${i}">${esc(e.label)}</button>`).join('')}</div>
+    <textarea id="intake-text" rows="6" placeholder="Paste an email…">${esc(ui.intakeText || '')}</textarea>
+    <div style="display:flex;gap:8px;align-items:center"><button class="btn primary" data-act="intake-read" ${ui.intakeBusy ? 'disabled' : ''}>${ui.intakeBusy ? 'Reading email…' : 'Fill the form'}</button><button class="btn" data-act="intake">Cancel</button></div></div>`;
+}
 function viewNew() {
   if (!ui.draft) ui.draft = newDraft('Customer');
   const d = ui.draft, cfg = S.config.domains[d.domain];
@@ -582,9 +804,11 @@ function viewNew() {
     if (f.type === 'country') ctl = `<select id="f-${f.k}" data-field="${f.k}"><option value="">Choose…</option>${Object.entries(COUNTRIES).map(([c, n]) => `<option value="${c}" ${v === c ? 'selected' : ''}>${n}</option>`).join('')}</select>`;
     else if (f.type === 'select') ctl = `<select id="f-${f.k}" data-field="${f.k}"><option value="">Choose…</option>${f.opts.map(o => `<option ${v === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
     else ctl = `<input type="text" id="f-${f.k}" data-field="${f.k}" value="${esc(v)}" ${f.hint ? `placeholder="${esc(f.hint)}"` : ''}>`;
-    return `<div class="field"><label for="f-${f.k}">${esc(f.label)} ${f.req ? '<span class="req" title="Required">*</span>' : '<span class="muted">(optional)</span>'}${f.sensitive ? '<span class="lock">RESTRICTED</span>' : ''}</label>${ctl}${f.sensitive ? '<span class="hint">Only Finance and MDM can view this after submission. Never sent by email.</span>' : ''}</div>`;
+    const ai = d.ai && d.ai.keys.includes(f.k);
+    return `<div class="field ${ai ? 'ai' : ''}"><label for="f-${f.k}">${esc(f.label)} ${f.req ? '<span class="req" title="Required">*</span>' : '<span class="muted">(optional)</span>'}${f.sensitive ? '<span class="lock">RESTRICTED</span>' : ''}${ai ? '<span class="aitag">from email</span>' : ''}</label>${ctl}${f.sensitive ? '<span class="hint">Only Finance and MDM can view this after submission. Never sent by email.</span>' : ''}</div>`;
   };
-  return `<div class="head"><div><h2>New master data request</h2><p>One standard form per record type. Required fields, duplicate checks and the approval route all come from the rules MDM maintains, so you never need to guess.</p></div></div>
+  return `<div class="head"><div><h2>New master data request</h2><p>One standard form per record type. Required fields, duplicate checks and the approval route all come from the rules MDM maintains, so you never need to guess.</p></div>${ui.intake ? '' : '<button class="btn" data-act="intake">✉ Start from an email</button>'}</div>
+  ${intakePanel()}
   <div class="types" role="group" aria-label="Record type">${Object.keys(S.config.domains).map(typeBtn).join('')}</div>
   <div class="form">
     <div class="panel">
@@ -603,20 +827,23 @@ function updateNewSide() {
   const d = ui.draft, cfg = S.config.domains[d.domain];
   const req = cfg.fields.filter(f => f.req), filled = req.filter(f => String(d.fields[f.k] || '').trim());
   const missing = req.filter(f => !String(d.fields[f.k] || '').trim());
-  const dups = similar(d.fields.name, d.domain);
+  const dups = similar(d.fields.name, d.domain, null, d.fields.taxId);
   const strong = dups.filter(x => x.score >= 0.9);
   const blocked = strong.length && !(d.dupOk && d.dupNote.trim().length >= 10);
   const ready = !missing.length && !blocked;
   const chain = cfg.chain.concat(['MDM']);
   el.innerHTML = `
+  ${d.ai ? `<div class="callout ext"><b>Filled ${d.ai.keys.length} fields from the email</b>${d.ai.notes.map(n => `<p style="font-size:13px">${esc(n)}</p>`).join('')}${missing.length ? `<p style="font-size:13px">Still missing: ${esc(missing.map(f => f.label).join(', '))}.</p>` : ''}</div>` : ''}
   <div class="panel"><h3>Completeness</h3><div class="meter"><i style="width:${req.length ? Math.round(filled.length / req.length * 100) : 100}%"></i></div>
     <p style="margin:0">${filled.length} of ${req.length} required fields done${missing.length ? `. Still needed: ${esc(missing.map(f => f.label).join(', '))}` : '. All set.'}</p></div>
   ${dups.length ? `<div class="callout ${strong.length ? 'bad' : 'warn'}"><b>${strong.length ? 'This looks like a record that already exists' : 'Similar records found'}</b>
-    ${dups.map(x => `<div class="dup"><span>${esc(x.label)}<br><span class="muted" style="font-size:12px">${x.where}</span></span><span class="mono">${esc(x.ref)} · ${Math.round(x.score * 100)}%</span></div>`).join('')}
+    ${dups.map(x => `<div class="dup"><span>${esc(x.label)}<br><span class="muted" style="font-size:12px">${x.where}</span>${d.domain === 'Customer' && x.where.startsWith('In SAP B1') ? historyLine(x.ref) : ''}</span><span class="mono">${esc(x.ref)} · ${Math.round(x.score * 100)}%</span></div>`).join('')}
+    ${strong.length && d.domain === 'Customer' && historyOf(strong[0].ref) ? `<p style="margin:0;font-size:12.5px"><b>Why this matters:</b> a second record would split this customer's order history. Forecasts would see two smaller customers, and Sales could get a false drop-off alert when orders move to the new code.</p>` : ''}
     ${strong.length ? `<label style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" id="dup-ok" ${d.dupOk ? 'checked' : ''}> <span>This is a different legal entity or product</span></label>
     <textarea id="dup-note" rows="2" placeholder="Explain the difference (shown to approvers)">${esc(d.dupNote)}</textarea>` : '<p style="margin:0;font-size:12.5px">Check these are different before submitting. Approvers will see the match.</p>'}</div>` : (norm(d.fields.name) ? `<div class="callout info"><p>No similar ${esc(d.domain.toLowerCase())} records in SAP B1 or open requests.</p></div>` : '')}
   <div class="panel"><h3>Approval route</h3><ol class="route">${chain.map(r => { const h = holderOf(r); return `<li>${esc(r === 'MDM' ? 'MDM final check & create in SAP B1' : r)} <span class="muted">· ${esc(h ? h.name : 'unassigned')}</span></li>`; }).join('')}</ol>
-    <p class="muted" style="margin:0;font-size:12.5px">Each approver is notified in Teams the moment it is their turn, and reminded after 48h.</p></div>
+    <p class="muted" style="margin:0;font-size:12.5px">Each approver is notified in Teams the moment it is their turn, and reminded after 48h.</p>
+    ${(() => { const e = etaForNew(chain); return `<div class="eta"><span class="muted">If you submit now, expected in SAP B1</span><b>${fmtDay(e.at)}</b><span class="muted">about ${Math.round(e.days)} working days, based on how long each approver usually takes. By email: ${EMAIL_BASELINE_DAYS} days.</span></div>`; })()}</div>
   <button class="btn primary" data-act="submit" ${ready ? '' : 'disabled'}>${ready ? 'Submit request' : missing.length ? 'Complete required fields to submit' : 'Confirm the duplicate check to submit'}</button>`;
 }
 
@@ -655,7 +882,8 @@ function stepsHtml(r) {
     if (s.status === 'done') { cls = 's-done'; dot = '✓'; sub = `${esc(h.name)} approved · ${stamp(s.at)}`; }
     else if (s.status === 'rejected') { cls = 's-bad'; dot = '✕'; sub = `${esc(h.name)} rejected · ${stamp(s.at)}`; }
     else if (s.status === 'current' && r.state === 'info') { cls = 's-info'; sub = `Returned to ${esc(person(r.requester).name)} for info · ${dur(Date.now() - r.returnedAt)} ago`; }
-    else if (s.status === 'current') { const age = Date.now() - s.since; cls = 's-current'; sub = `With ${esc(h ? h.name : 'unassigned')} for ${dur(age)}${age > 2 * DAY ? ' · reminder sent' : ' · notified in Teams'}`; }
+    else if (s.status === 'current') { const age = Date.now() - s.since; cls = 's-current'; sub = `With ${esc(h ? h.name : 'unassigned')} for ${dur(age)}${age > 2 * DAY ? ' · reminder sent' : ' · notified in Teams'} · usually ${TYPICAL[s.role] || 1}d`; }
+    else if (s.status === 'todo' && TYPICAL[s.role]) { sub += ` · usually ${TYPICAL[s.role]}d`; }
     items.push(`<li class="${cls}"><span class="dot">${dot}</span><div><div class="lbl">${esc(label)}</div><div class="sub">${sub}</div></div></li>`);
   });
   if (r.state === 'done') items.push(`<li class="s-done"><span class="dot">✓</span><div><div class="lbl">Live in SAP B1 as <span class="mono">${esc(r.sapCode)}</span></div><div class="sub">Requester notified · total ${dur(r.closed - r.created)}</div></div></li>`);
@@ -667,9 +895,12 @@ function decisionHtml(r) {
   if (r.state === 'info') return `<div class="decide"><b>${esc(person(r.returnedBy).name)} needs more information from you</b><p class="muted" style="margin:0">Update the fields below if needed, add a reply in the conversation, then resubmit. It goes straight back to ${esc(current(r).role)}.</p><div class="acts"><button class="btn primary" data-act="resubmit" data-id="${r.id}">Resubmit</button></div></div>`;
   const c = current(r);
   const final = c.role === 'MDM';
-  const dups = similar(r.fields.name, r.domain, r.id);
+  const dups = similar(r.fields.name, r.domain, r.id, r.fields.taxId);
+  const waitingConv = S.requests.find(x => x.linked === r.id && x.kind === 'conv' && x.cls.kind === 'po' && !x.cls.knownCode);
+  const wv = waitingConv ? poValue(waitingConv.cls) : 0;
   return `<div class="decide"><b>${final ? 'Final check: create this record in SAP B1' : 'Your approval: ' + esc(c.role)}</b>
-    ${dups.length ? `<div class="callout warn"><p><b>Duplicate check:</b> ${dups.map(x => esc(x.label) + ' (' + esc(x.ref) + ', ' + Math.round(x.score * 100) + '%)').join('; ')}</p>${r.fields.dupNote ? `<p>Requester's reason: ${esc(r.fields.dupNote)}</p>` : ''}</div>` : '<p class="muted" style="margin:0">Duplicate check: no similar records.</p>'}
+    ${wv ? `<div class="callout bad"><p><b>${sgdShort(wv)} of orders are waiting on this.</b> ${esc(person(waitingConv.party).company)} sent a purchase order (${esc(waitingConv.id)}) that can't be entered until this customer exists in SAP B1.</p></div>` : ''}
+    ${dups.length ? `<div class="callout warn"><p><b>Duplicate check:</b> ${dups.map(x => esc(x.label) + ' (' + esc(x.ref) + ', ' + Math.round(x.score * 100) + '%)').join('; ')}</p>${r.domain === 'Customer' ? dups.filter(x => x.where.startsWith('In SAP B1')).map(x => historyLine(x.ref)).join('') : ''}${r.fields.dupNote ? `<p>Requester's reason: ${esc(r.fields.dupNote)}</p>` : ''}</div>` : '<p class="muted" style="margin:0">Duplicate check: no similar records.</p>'}
     <textarea id="dec-${r.id}" rows="2" placeholder="Comment (required to return or reject)"></textarea>
     <div class="acts"><button class="btn primary" data-act="approve" data-id="${r.id}">${final ? 'Create in SAP B1' : 'Approve'}</button><button class="btn" data-act="return" data-id="${r.id}">Ask for info</button><button class="btn danger" data-act="reject" data-id="${r.id}">Reject</button></div></div>`;
 }
@@ -695,8 +926,8 @@ function viewDetail(r) {
       <p class="muted" style="margin:0;font-size:12.5px">Why: ${esc(c.reasons.join('; '))}. Counts toward ${c.kind === 'po' ? 'order' : 'enquiry'} volumes in the regional view, kept separate from MDM setup requests.</p>
       ${r.state === 'open' ? `<div><button class="btn small" data-act="reclass" data-id="${r.id}">Mark as ${c.kind === 'po' ? 'enquiry' : 'purchase order'}</button></div>` : ''}
       ${c.knownCode ? `<div class="callout info"><p>${esc(p.company)} is in SAP B1 as <span class="mono">${esc(c.knownCode)}</span>. The order can be entered now.</p></div>`
-        : linked ? `<div class="callout ${linked.state === 'done' ? 'info' : 'warn'}"><p>Customer setup ${linked.state === 'done' ? 'complete: <span class="mono">' + esc(linked.sapCode) + '</span>' : 'in progress'}: <button class="linkish" data-act="open" data-id="${linked.id}">${linked.id}</button> (${esc(stateInfo(linked)[1])})</p></div>`
-        : `<div class="callout bad"><p><b>${esc(p.company)} is not a customer in SAP B1 yet.</b> The order can't be entered until the account is set up.</p><div><button class="btn primary small" data-act="setup" data-id="${r.id}">Start customer setup</button></div></div>`}
+        : linked ? `<div class="callout ${linked.state === 'done' ? 'info' : 'warn'}"><p>Customer setup ${linked.state === 'done' ? 'complete: <span class="mono">' + esc(linked.sapCode) + '</span>' : 'in progress'}: <button class="linkish" data-act="open" data-id="${linked.id}">${linked.id}</button> (${esc(stateInfo(linked)[1])})${linked.state !== 'done' && eta(linked) ? `. Order can be entered from about <b>${fmtDay(eta(linked).at)}</b>` : ''}</p></div>`
+        : `<div class="callout bad"><p><b>${esc(p.company)} is not a customer in SAP B1 yet.</b> ${c.kind === 'po' && poValue(c) ? `This order (about ${sgdShort(poValue(c))}) can't be entered until the account is set up.` : `The order can't be entered until the account is set up.`}</p><div><button class="btn primary small" data-act="setup" data-id="${r.id}">Start customer setup</button></div></div>`}
       ${r.state === 'open' ? `<div><button class="btn" data-act="handled" data-id="${r.id}">Mark handled</button></div>` : ''}</div>`;
     return `${back}
     <div class="head"><div><div class="mono muted">${r.id}</div><h2>${esc(r.subject)}</h2><p>${esc(p.name)}, ${esc(p.title)} at ${esc(p.company)} · ${esc(COUNTRIES[p.country])}</p></div>${ext ? `<span class="tag ext">${esc(extStatus(r))}</span>` : `<span class="pill ${cls}">${label}</span>`}</div>
@@ -716,13 +947,77 @@ function viewDetail(r) {
   <div class="detail"><div class="section">
     ${showFields ? `<div class="panel"><h3>Request details</h3><dl class="fields">${canEdit ? editableFields(r) : defs.map(f => `<dt>${esc(f.label)}</dt><dd>${fieldValue(r, f)}</dd>`).join('')}
       ${r.fields.dupNote ? `<dt>Duplicate override</dt><dd>${esc(r.fields.dupNote)}</dd>` : ''}${linkedConv ? `<dt>Raised from</dt><dd><button class="linkish" data-act="open" data-id="${linkedConv.id}">${linkedConv.id}</button> · ${esc(linkedConv.subject)}</dd>` : ''}</dl></div>` : ''}
+    ${sapHandoffHtml(r)}
     <div class="panel"><h3>Conversation</h3><div class="thread">${msgs.length ? msgs.map(m => msgHtml(m, r)).join('') : '<p class="muted" style="margin:0">No messages yet.</p>'}</div>${composer(r)}</div>
   </div>
   <aside class="section">
     ${decisionHtml(r)}
-    ${ext ? '' : `<div class="panel"><h3>Where it stands</h3>${stepsHtml(r)}${(r.state === 'open') && !onMe(r) && waitingOn(r) ? `<div><button class="btn small" data-act="nudge" data-id="${r.id}">Nudge ${esc(waitingOn(r).who ? waitingOn(r).who.name : '')}</button></div>` : ''}</div>`}
+    ${ext ? '' : `<div class="panel"><h3>Where it stands</h3>${etaHtml(r)}${stepsHtml(r)}${(r.state === 'open') && !onMe(r) && waitingOn(r) ? `<div><button class="btn small" data-act="nudge" data-id="${r.id}">Nudge ${esc(waitingOn(r).who ? waitingOn(r).who.name : '')}</button></div>` : ''}</div>`}
     ${ext ? '' : auditHtml(r)}
   </aside></div>`;
+}
+/* ---------- SAP B1 handoff ----------
+   The approved record as an SAP B1 Service Layer request. In production a Power Automate flow (or the MDM analyst's
+   one click) posts it after logging in (POST /b1s/v1/Login); here it is shown and downloadable. Fields starting U_ are
+   user-defined fields MDM creates once in SAP B1. Lookups resolve names to SAP B1's internal codes. */
+function sapPayload(r) {
+  const f = r.fields, ctry = f.country || r.country, lookups = [];
+  const udf = {};
+  r.defs.filter(d => d.k.startsWith('x') && f[d.k]).forEach(d => { udf['U_' + d.label.replace(/[^A-Za-z0-9]+/g, '').slice(0, 18)] = f[d.k]; });
+  const approvals = r.steps.filter(st => st.status === 'done').map(st => ({ step: st.role, by: person(st.by).name, at: new Date(st.at).toISOString() }));
+  let object, body;
+  if (r.domain === 'Customer' || r.domain === 'Vendor') {
+    object = 'BusinessPartners';
+    const termsText = f.creditTerms || f.paymentTerms || '';
+    const limit = (termsText.match(/limit\s*[A-Z]{3}\s*([\d,]+)/i) || [])[1];
+    body = { CardCode: r.sapCode, CardName: f.name, CardType: r.domain === 'Customer' ? 'cCustomer' : 'cSupplier', FederalTaxID: f.taxId || undefined,
+      EmailAddress: f.contact || undefined, Country: ctry, PayTermsGrpCode: null, CreditLimit: limit ? +limit.replace(/,/g, '') : undefined,
+      BPAddresses: f.address ? [{ AddressName: 'BILL TO', AddressType: 'bo_BillTo', Street: f.address, Country: ctry }] : undefined,
+      BPBankAccounts: f.bank ? [{ BankCode: null, AccountNo: (f.bank.match(/[\d ]{6,}/) || [f.bank])[0].trim(), Country: ctry }] : undefined,
+      U_Entity: r.entity, U_HubRequest: r.id };
+    if (termsText) lookups.push({ field: 'PayTermsGrpCode', from: termsText.split(',')[0], resolve: "GET /b1s/v1/PaymentTermsTypes?$filter=PaymentTermsGroupName eq '" + termsText.split(',')[0] + "'" });
+    if (f.bank) lookups.push({ field: 'BPBankAccounts[0].BankCode', from: f.bank.split(/\d/)[0].trim(), resolve: 'GET /b1s/v1/Banks?$filter=BankName eq ...' });
+  } else if (r.domain === 'Item') {
+    object = 'Items';
+    const sup = f.supplier ? S.records.filter(x => x.type === 'Vendor').map(x => ({ x, s: dice(f.supplier, x.name) })).sort((a, b) => b.s - a.s)[0] : null;
+    body = { ItemCode: r.sapCode, ItemName: f.name, InventoryItem: 'tYES', SalesItem: 'tYES', PurchaseItem: 'tYES', InventoryUOM: f.uom, SalesUnit: f.uom, PurchaseUnit: f.uom,
+      Mainsupplier: sup && sup.s >= 0.8 ? sup.x.code : undefined, ItemsGroupCode: null,
+      U_ProductLine: f.productLine, U_RegLicence: f.licence || undefined, U_HSCode: f.hsCode || undefined, U_Entity: r.entity, U_HubRequest: r.id };
+    lookups.push({ field: 'ItemsGroupCode', from: f.productLine, resolve: "GET /b1s/v1/ItemGroups?$filter=GroupName eq '" + f.productLine + "'" });
+  } else {
+    object = 'ProfitCenters';
+    body = { CenterCode: r.sapCode, CenterName: f.name, InWhichDimension: 1, CenterOwner: f.owner || undefined, U_GLGroup: f.glGroup || undefined, U_HubRequest: r.id };
+  }
+  Object.assign(body, udf);
+  return { object, method: 'POST', endpoint: '/b1s/v1/' + object, body: JSON.parse(JSON.stringify(body)), lookups, approvals, generated: new Date(r.closed || Date.now()).toISOString() };
+}
+function payloadCsv(pl) {
+  const flat = {}; Object.entries(pl.body).forEach(([k, v]) => { if (Array.isArray(v)) v.forEach((o, i) => Object.entries(o).forEach(([k2, v2]) => { flat[`${k}_${i}_${k2}`] = v2; })); else flat[k] = v; });
+  const q = v => v == null ? '' : /[",\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+  return [Object.keys(flat).map(q).join(','), Object.values(flat).map(q).join(',')].join('\n') + '\n';
+}
+function download(text, name, type) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+function sapHandoffHtml(r) {
+  if (isExt() || r.state !== 'done' || !r.sapCode || r.kind !== 'mdm') return '';
+  const pl = sapPayload(r), canSee = has('Finance') || has('MDM');
+  const shown = JSON.parse(JSON.stringify(pl.body));
+  if (!canSee) { if (shown.BPBankAccounts) shown.BPBankAccounts = '•••• restricted'; if (shown.CreditLimit) shown.CreditLimit = '•••• restricted'; }
+  const lines = JSON.stringify(shown, null, 2).split('\n');
+  return `<div class="panel"><h3>SAP B1 handoff</h3>
+    <p style="margin:0">The approved record as an SAP B1 Service Layer call: <span class="mono">${pl.method} ${pl.endpoint}</span>. Nobody re-keys it.</p>
+    <pre class="code">${esc(lines.slice(0, 16).join('\n'))}${lines.length > 16 ? '\n  …' : ''}</pre>
+    ${pl.lookups.length ? `<p class="muted" style="margin:0;font-size:12.5px">Resolved at posting: ${pl.lookups.map(l => `<span class="mono">${esc(l.field)}</span> from "${esc(l.from)}"`).join(', ')}.</p>` : ''}
+    <div style="display:flex;gap:8px;flex-wrap:wrap">${canSee ? `<button class="btn small" data-act="dl-json" data-id="${r.id}">Download Service Layer JSON</button><button class="btn small" data-act="dl-csv" data-id="${r.id}">Download CSV (Data Transfer Workbench)</button>` : '<span class="muted" style="font-size:12.5px">Downloads are limited to Finance and MDM because the file contains restricted fields.</span>'}</div>
+    <p class="muted" style="margin:0;font-size:12.5px">Production: a Power Automate flow posts this as soon as MDM clicks Create, and writes the new code back to the hub. The file includes the approval trail (${pl.approvals.length} sign-offs) for audit.</p></div>`;
+}
+function etaHtml(r) {
+  const e = eta(r); if (!e) return '';
+  const total = workDaysBetween(r.created, e.at);
+  return `<div class="eta"><span class="muted">Expected in SAP B1</span><b>${fmtDay(e.at)}</b><span class="muted">about ${Math.max(1, Math.round(total))} working days from submission, vs ${EMAIL_BASELINE_DAYS} days by email</span></div>
+    ${e.late ? `<div class="callout warn"><p><b>Bottleneck: ${esc(e.role)}.</b> ${esc(e.who ? e.who.name : e.role)} usually responds in ${e.typ} days and this has waited ${e.elapsed.toFixed(1)}. Every working day it waits pushes the finish date back a day.</p></div>` : ''}`;
 }
 function auditHtml(r) {
   return `<div class="panel"><h3>Audit trail</h3><ul class="audit">${r.audit.slice().reverse().map(a => `<li><time class="mono">${stamp(a.at)}</time><span><b>${esc(a.by === 'system' ? 'System' : person(a.by).name)}</b> ${esc(a.text)}</span></li>`).join('')}</ul><p class="muted" style="margin:0;font-size:12px">Append-only. Every approval, change and view of restricted fields is recorded with who and when.</p></div>`;
@@ -734,8 +1029,8 @@ function viewMaster() {
     .sort((a, b) => b.created - a.created);
   return `<div class="head"><div><h2>SAP B1 master records</h2><p>A read-only mirror of Business Partners, Items and Cost Centers. Searching here and in the request form uses fuzzy matching, so "Natl Univ Hosp" still finds National University Hospital.</p></div></div>
   <input type="text" id="mq" placeholder="Search by name or code" value="${esc(q)}" style="max-width:360px">
-  <div class="tablewrap"><table><thead><tr><th>Code</th><th>Type</th><th>Name</th><th>Entity</th><th>Country</th><th>Created</th></tr></thead><tbody>
-  ${rows.map(r => `<tr><td class="mono">${esc(r.code)}</td><td>${esc(r.type)}</td><td>${esc(r.name)}</td><td>${esc(r.entity)}</td><td>${esc(COUNTRIES[r.country] || r.country)}</td><td class="muted">${rel(r.created)}</td></tr>`).join('') || '<tr><td colspan="6" class="muted">No records match.</td></tr>'}
+  <div class="tablewrap"><table><thead><tr><th>Code</th><th>Type</th><th>Name</th><th>Entity</th><th>Country</th><th>Orders, 12 months</th><th>Created</th></tr></thead><tbody>
+  ${rows.map(r => { const h = r.type === 'Customer' ? historyOf(r.code) : null; return `<tr><td class="mono">${esc(r.code)}</td><td>${esc(r.type)}</td><td>${esc(r.name)}</td><td>${esc(r.entity)}</td><td>${esc(COUNTRIES[r.country] || r.country)}</td><td class="mono">${h && h.value ? sgdShort(h.value) : '<span class="muted">–</span>'}</td><td class="muted">${rel(r.created)}</td></tr>`; }).join('') || '<tr><td colspan="7" class="muted">No records match.</td></tr>'}
   </tbody></table></div>`;
 }
 
@@ -754,7 +1049,7 @@ function viewRules() {
     <div style="display:flex;gap:8px;flex-wrap:wrap"><input type="text" id="newfield" placeholder="New field, e.g. Cold-chain storage temp" style="flex:1;min-width:180px" ${dis}><button class="btn" data-act="fadd" ${dis}>Add field</button></div>
   </div>
   <aside class="section"><div class="panel"><h3>Approval route</h3><div class="chain">
-    ${dom.chain.map((r, i) => `<div class="link"><span class="mono muted">${i + 1}</span><b>${esc(r)}</b><span class="muted" style="font-size:12px">${esc((holderOf(r) || {}).name || '')}</span><button class="btn small" data-act="cup" data-i="${i}" ${dis || (i === 0 ? 'disabled' : '')} aria-label="Move up">↑</button><button class="btn small danger" data-act="cdel" data-i="${i}" ${dis || (dom.chain.length < 2 ? 'disabled' : '')} aria-label="Remove step">✕</button></div>`).join('')}
+    ${dom.chain.map((r, i) => `<div class="link"><span class="mono muted">${i + 1}</span><b>${esc(r)}</b><span class="muted" style="font-size:12px">${esc((holderOf(r) || {}).name || '')} · usually ${TYPICAL[r] || 1}d</span><button class="btn small" data-act="cup" data-i="${i}" ${dis || (i === 0 ? 'disabled' : '')} aria-label="Move up">↑</button><button class="btn small danger" data-act="cdel" data-i="${i}" ${dis || (dom.chain.length < 2 ? 'disabled' : '')} aria-label="Remove step">✕</button></div>`).join('')}
     <div class="link" style="background:var(--sunken)"><span class="mono muted">${dom.chain.length + 1}</span><b>MDM check &amp; create in SAP B1</b><span class="muted" style="font-size:12px">always last</span></div></div>
     <div style="display:flex;gap:8px"><select id="addstep" style="flex:1" ${dis}>${ROLES.filter(r => r !== 'MDM' && !dom.chain.includes(r)).map(r => `<option>${esc(r)}</option>`).join('')}</select><button class="btn" data-act="cadd" ${dis}>Add step</button></div>
     <p class="muted" style="margin:0;font-size:12.5px">Changes apply to new requests. Requests already in flight keep the route they started with.</p></div>
@@ -762,36 +1057,392 @@ function viewRules() {
   </aside></div>`;
 }
 
+/* ---------- regional business view ----------
+   Numbers come from analytics/analyze.py (run analytics/build.py to refresh). Simulated data: the brief ships none. */
+/*REGIONAL_DATA*/const REGIONAL = {"generated":"23 Oct 2026","simulated":true,"period":{"from":"2025-10","to":"2026-09","months":["2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07","2026-08","2026-09"],"chart_months":["2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07","2026-08","2026-09"],"backtest":["2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07","2026-08","2026-09"],"future":["2026-10","2026-11","2026-12"]},"growth_definition":"Units ordered Oct 2025 - Sep 2026 vs the same 12 months a year earlier (Oct 2024 - Sep 2025). Comparing the same months cancels out holidays and budget cycles. The 3-month figure compares Jul - Sep 2026 with Jul - Sep 2025.","price":{"A":180.0,"B":420.0,"C":95.0},"countries":{"SG":"Singapore","MY":"Malaysia","TH":"Thailand","VN":"Vietnam","PH":"Philippines"},"regional":{"units":92777,"value":16130495,"growth":0.0489,"value_growth":0.064,"by_product":{"A":{"units":47308,"growth":0.0332},"B":{"units":10140,"growth":0.1502},"C":{"units":35329,"growth":0.0436}},"by_country":{"SG":{"value":3329010,"growth":-0.0215},"MY":{"value":2751680,"growth":-0.1967},"TH":{"value":3714055,"growth":0.1243},"VN":{"value":3507010,"growth":0.4663},"PH":{"value":2828740,"growth":0.0726}}},"cells":[{"country":"SG","product":"A","units":10263,"value":1847340,"growth":-0.0621,"growth_3m":-0.0882,"buyers":29},{"country":"SG","product":"B","units":1393,"value":585060,"growth":0.0349,"growth_3m":-0.2276,"buyers":12},{"country":"SG","product":"C","units":9438,"value":896610,"growth":0.034,"growth_3m":0.0361,"buyers":17},{"country":"MY","product":"A","units":8315,"value":1496700,"growth":-0.2064,"growth_3m":-0.3188,"buyers":32},{"country":"MY","product":"B","units":1478,"value":620760,"growth":-0.2262,"growth_3m":-0.2893,"buyers":20},{"country":"MY","product":"C","units":6676,"value":634220,"growth":-0.1399,"growth_3m":-0.3072,"buyers":16},{"country":"TH","product":"A","units":10254,"value":1845720,"growth":0.1767,"growth_3m":0.2565,"buyers":30},{"country":"TH","product":"B","units":2284,"value":959280,"growth":0.1437,"growth_3m":0.0337,"buyers":21},{"country":"TH","product":"C","units":9569,"value":909055,"growth":0.0143,"growth_3m":-0.0211,"buyers":20},{"country":"VN","product":"A","units":7471,"value":1344780,"growth":0.3272,"growth_3m":0.2184,"buyers":32},{"country":"VN","product":"B","units":3511,"value":1474620,"growth":0.7002,"growth_3m":0.7039,"buyers":26},{"country":"VN","product":"C","units":7238,"value":687610,"growth":0.3451,"growth_3m":0.4458,"buyers":19},{"country":"PH","product":"A","units":11005,"value":1980900,"growth":0.098,"growth_3m":0.0342,"buyers":33},{"country":"PH","product":"B","units":1474,"value":619080,"growth":-0.016,"growth_3m":-0.0132,"buyers":13},{"country":"PH","product":"C","units":2408,"value":228760,"growth":0.1216,"growth_3m":0.1358,"buyers":5}],"series":{"MY-A":{"actual":[884,869,1282,621,931,628,809,852,904,882,897,919,880,980,850,960,515,555,607,650,480,595,695,548],"bt":{"avg6":[877.2,889.0,910.3,901.3,914.3,850.7,790.0,744.5,689.5,627.8,567.0,597.0],"avg12":[873.2,872.8,882.1,846.1,874.3,839.7,833.6,816.8,799.9,764.6,740.7,723.8],"gbm":[942.7,1012.9,996.7,947.5,618.3,752.6,867.7,694.1,738.6,616.1,604.1,619.9]},"future":[634.1,784.7,682.4],"wape":{"avg6":0.193,"avg12":0.2415,"hw":0.2464,"gbm":0.1567,"ens":0.1963}},"MY-B":{"actual":[149,233,199,106,192,109,158,158,167,131,171,137,155,190,190,138,88,87,102,115,101,108,111,93],"bt":{"avg6":[153.7,153.2,158.5,162.3,163.5,149.7,141.3,132.5,120.0,105.2,100.2,104.0],"avg12":[159.2,159.7,156.1,155.3,158.0,149.3,147.5,142.8,139.2,133.8,131.8,126.8],"gbm":[155.6,176.5,184.0,178.3,120.7,135.8,150.8,124.1,128.1,108.7,121.0,106.3]},"future":[115.5,140.9,117.2],"wape":{"avg6":0.2251,"avg12":0.2775,"hw":0.1646,"gbm":0.1698,"ens":0.1431}},"MY-C":{"actual":[524,835,796,439,573,549,725,580,664,682,648,747,711,786,662,733,408,385,507,515,530,503,414,522],"bt":{"avg6":[674.3,672.0,706.3,706.0,714.5,674.5,614.2,580.2,535.0,513.0,474.7,475.7],"avg12":[646.8,662.4,658.3,647.2,671.7,657.9,644.2,626.1,620.7,609.5,594.6,575.1],"gbm":[693.3,717.4,846.5,724.9,487.8,590.6,700.6,549.6,504.7,553.7,531.2,528.6]},"future":[525.7,676.6,638.1],"wape":{"avg6":0.1666,"avg12":0.2236,"hw":0.2226,"gbm":0.1486,"ens":0.1818}},"PH-A":{"actual":[787,1059,969,911,789,681,700,845,769,802,924,787,892,983,1111,831,936,950,769,952,982,771,888,940],"bt":{"avg6":[804.5,836.5,859.5,916.5,921.3,923.3,950.5,930.0,924.8,903.3,893.3,885.3],"avg12":[835.2,844.0,837.7,849.5,842.8,855.1,877.5,883.2,892.2,909.9,907.3,904.3],"gbm":[807.3,882.1,979.1,862.7,858.8,850.9,737.9,906.7,900.1,921.7,906.8,912.1]},"future":[941.3,1039.2,1069.6],"wape":{"avg6":0.0968,"avg12":0.1033,"hw":0.0949,"gbm":0.0801,"ens":0.0834}},"PH-B":{"actual":[126,157,142,131,106,118,93,134,112,107,124,148,94,147,135,105,128,120,98,130,143,135,100,139],"bt":{"avg6":[119.7,119.8,122.0,125.8,125.5,126.2,121.5,122.2,119.3,120.7,125.7,121.0],"avg12":[124.8,122.2,121.3,120.8,118.6,120.4,120.6,121.0,120.7,123.2,125.6,123.6],"gbm":[127.7,132.0,140.9,117.7,115.3,123.6,95.6,123.5,113.6,123.9,132.1,129.8]},"future":[131.6,148.9,144.5],"wape":{"avg6":0.1413,"avg12":0.1368,"hw":0.1265,"gbm":0.1181,"ens":0.1173}},"PH-C":{"actual":[225,204,135,164,170,196,114,212,160,165,172,230,152,270,243,202,174,161,168,186,208,221,222,201],"bt":{"avg6":[175.5,181.8,191.5,205.3,211.5,211.8,200.3,203.0,189.0,183.2,186.3,194.3],"avg12":[178.9,172.8,178.3,187.3,190.5,190.8,187.9,192.4,190.2,194.2,198.9,203.1],"gbm":[181.3,212.5,234.1,184.4,193.5,187.3,156.4,199.5,196.5,193.1,201.0,209.5]},"future":[209.7,224.6,232.2],"wape":{"avg6":0.1675,"avg12":0.1436,"hw":0.1699,"gbm":0.1051,"ens":0.1352}},"SG-A":{"actual":[808,1053,1056,616,957,1181,794,898,767,924,934,955,881,832,890,1006,533,1127,805,785,839,885,809,871],"bt":{"avg6":[878.7,893.2,882.2,902.7,916.3,849.5,878.2,865.5,857.7,849.2,829.0,875.0],"avg12":[911.9,918.0,899.6,885.8,918.2,882.9,878.4,879.3,869.9,875.9,872.7,862.2],"gbm":[948.5,1043.1,1016.0,1009.9,651.2,1189.4,893.9,775.3,882.4,877.1,877.7,938.8]},"future":[862.1,869.1,880.6],"wape":{"avg6":0.104,"avg12":0.1127,"hw":0.1211,"gbm":0.0853,"ens":0.0972}},"SG-B":{"actual":[138,83,87,85,108,144,111,98,123,134,128,107,132,133,110,147,87,132,110,125,132,98,68,119],"bt":{"avg6":[116.8,120.3,126.2,124.0,126.2,119.3,123.5,119.8,118.5,122.2,114.0,110.8],"avg12":[112.2,111.7,115.8,117.8,122.9,121.2,120.2,120.1,122.3,123.1,120.1,115.1],"gbm":[122.8,126.2,127.2,138.4,88.5,161.5,119.9,118.5,125.9,127.8,120.8,113.1]},"future":[108.7,115.9,115.3],"wape":{"avg6":0.1646,"avg12":0.1643,"hw":0.1661,"gbm":0.1319,"ens":0.1325}},"SG-C":{"actual":[769,671,788,523,716,1011,700,670,733,781,992,774,518,588,818,914,590,857,770,894,850,929,924,786],"bt":{"avg6":[775.0,744.7,731.0,745.2,767.3,700.3,714.2,756.2,807.2,812.5,815.0,870.7],"avg12":[760.7,739.8,732.8,735.3,767.9,757.4,744.6,750.4,769.1,778.8,791.2,785.5],"gbm":[770.2,807.6,737.1,779.6,541.8,967.9,730.9,754.1,826.9,781.6,843.9,871.9]},"future":[849.5,844.4,863.5],"wape":{"avg6":0.1642,"avg12":0.1557,"hw":0.1887,"gbm":0.1443,"ens":0.1593}},"TH-A":{"actual":[658,705,738,652,786,718,522,752,750,743,673,1017,860,849,750,765,785,873,599,793,923,856,973,1228],"bt":{"avg6":[742.8,799.2,815.3,815.3,819.0,837.7,813.7,770.2,760.8,789.7,804.8,836.2],"avg12":[726.2,743.0,755.0,756.0,765.4,765.3,778.2,784.7,788.1,802.5,811.9,836.9],"gbm":[745.0,772.3,813.8,780.1,797.0,778.8,648.8,787.5,805.9,809.0,834.9,1184.1]},"future":[964.4,913.2,908.7],"wape":{"avg6":0.1344,"avg12":0.1277,"hw":0.0979,"gbm":0.0759,"ens":0.0812}},"TH-B":{"actual":[178,161,165,145,151,168,132,170,164,176,195,192,195,206,220,205,175,182,144,200,175,185,177,220],"bt":{"avg6":[171.5,182.0,188.0,197.3,202.2,198.8,197.2,188.7,187.7,180.2,176.8,177.2],"avg12":[166.4,167.8,171.6,176.2,181.2,183.2,184.3,185.3,187.8,188.8,189.5,188.0],"gbm":[168.4,181.4,188.1,190.3,196.4,180.8,165.4,183.4,187.1,192.1,195.7,231.0]},"future":[192.4,199.0,216.7],"wape":{"avg6":0.1122,"avg12":0.1171,"hw":0.0946,"gbm":0.0908,"ens":0.0904}},"TH-C":{"actual":[784,761,815,835,666,787,612,865,698,737,812,1062,759,693,917,753,750,836,665,879,761,746,762,1048],"bt":{"avg6":[797.7,822.2,793.5,830.0,832.7,822.3,784.7,769.0,800.0,774.0,772.8,774.8],"avg12":[786.2,784.1,778.4,786.9,780.1,787.1,791.2,795.6,796.8,802.0,802.8,798.6],"gbm":[816.7,819.1,814.5,767.0,799.1,849.7,624.8,786.9,808.8,797.5,835.0,1069.4]},"future":[859.5,818.6,870.4],"wape":{"avg6":0.1092,"avg12":0.1005,"hw":0.0619,"gbm":0.072,"ens":0.0656}},"VN-A":{"actual":[493,482,477,301,366,499,497,478,420,518,550,548,595,621,728,755,344,651,619,650,539,679,599,691],"bt":{"avg6":[501.8,518.2,542.0,593.3,632.8,598.5,615.7,619.7,624.5,593.0,580.3,622.8],"avg12":[469.1,477.6,489.2,510.1,547.9,546.1,558.8,568.9,583.2,593.2,606.6,610.7],"gbm":[512.0,599.2,623.4,638.6,412.8,579.5,629.8,561.6,682.0,622.5,653.1,638.4]},"future":[696.5,743.1,836.2],"wape":{"avg6":0.1575,"avg12":0.1902,"hw":0.1911,"gbm":0.1167,"ens":0.1464}},"VN-B":{"actual":[149,195,179,97,138,203,177,156,180,192,175,224,257,253,334,293,175,321,284,320,267,281,371,355],"bt":{"avg6":[184.0,197.3,213.5,239.2,256.0,256.0,272.2,276.7,287.8,276.7,274.7,307.3],"avg12":[172.1,181.1,185.9,198.8,215.2,218.2,228.1,237.0,250.7,257.9,265.3,281.7],"gbm":[197.4,243.1,239.2,251.2,163.7,230.0,308.1,293.9,308.5,285.9,292.5,339.9]},"future":[339.5,383.0,417.4],"wape":{"avg6":0.1918,"avg12":0.2561,"hw":0.1519,"gbm":0.142,"ens":0.1409}},"VN-C":{"actual":[497,573,642,255,446,529,403,389,384,444,415,404,423,692,733,662,389,630,608,722,553,531,624,671],"bt":{"avg6":[406.5,409.8,460.3,518.5,554.8,550.5,588.2,619.0,624.0,594.0,572.2,611.3],"avg12":[448.4,442.2,452.2,459.8,493.7,488.9,497.3,514.4,542.2,556.2,563.5,580.9],"gbm":[461.1,486.3,517.4,552.0,327.3,489.5,634.5,584.0,669.3,620.8,611.7,631.5]},"future":[657.2,731.1,818.8],"wape":{"avg6":0.1835,"avg12":0.2085,"hw":0.1639,"gbm":0.165,"ens":0.1583}}},"accuracy":{"avg6":0.1448,"avg12":0.1597,"hw":0.147,"gbm":0.1133,"ens":0.1246},"best_baseline":"avg6","wins":15,"series_count":15,"importance":[{"driver":"Holiday and budget calendar","share":0.476},{"driver":"Recent months' orders","share":0.336},{"driver":"Country and product","share":0.092},{"driver":"Same month last year","share":0.07},{"driver":"Time of year","share":0.026}],"next_month":{"A":4098,"B":888,"C":3102},"dedup":{"records":198,"accounts_after":168,"true_accounts":168,"planted":30,"caught":30,"false_merges":0,"missed":0,"missed_examples":[],"threshold":0.92,"by_tax":[{"record":"C20099","name":"NUH","matches":"C10012","matches_name":"National University Hospital"}],"examples":[{"keep":"C10012","keep_name":"National University Hospital","others":[{"code":"C20099","name":"NUH","score":0.0}]},{"keep":"C10145","keep_name":"Chiang Mai Medical Laboratory","others":[{"code":"C20073","name":"Chiang Mai Medical Lab Co., Ltd.","score":1.0}]},{"keep":"C10543","keep_name":"Jurong Central Medical Centre","others":[{"code":"C20047","name":"Jurong Central Med Centre","score":1.0}]},{"keep":"C10546","keep_name":"Tampines Community Pathology Lab","others":[{"code":"C20087","name":"Tampines Community Pathology Lab Pte Ltd","score":1.0}]},{"keep":"C10577","keep_name":"Bukit Timah Women's & Children's Diagnostics","others":[{"code":"C20067","name":"BUKIT TIMAH WOMEN'S & CHILDREN'S DIAG","score":1.0}]},{"keep":"C10666","keep_name":"Outram Community Medical Centre","others":[{"code":"C20001","name":"OUTRAM COMMUNITY MED CENTRE","score":1.0}]}]},"cleanup":{"before":{"customers":198,"drop_alerts":18,"drop_false":9,"xs_gaps":100,"xs_false":32,"xs_value":2416360,"xs_value_all":3760089,"ghost_new":9},"after":{"customers":168,"drop_alerts":10,"drop_false":1,"xs_gaps":97,"xs_false":0,"xs_value":3169798,"xs_value_all":3169798,"ghost_new":0}},"churn_caught":9,"churn_planted":10,"dropoffs":[{"code":"C10808","name":"Kuching Women's & Children's Hospital","country":"MY","products":["A","B","C"],"prior_month":35640,"recent_month":6575,"at_risk_year":348775,"real":true,"trend":[34130,37685,56245,23475,11325,16325,16385,12340,8125,7355,7195,5175]},{"code":"C10804","name":"Ipoh Riverside Medical Centre","country":"MY","products":["A","B","C"],"prior_month":19892,"recent_month":1048,"at_risk_year":226130,"real":true,"trend":[17210,16570,12785,7925,4095,2675,3155,2500,1605,1015,1065,1065]},{"code":"C10716","name":"Melaka United Laboratory","country":"MY","products":["A","B"],"prior_month":22850,"recent_month":6980,"at_risk_year":190440,"real":true,"trend":[10920,29880,18840,18660,7620,5580,6900,7920,5040,5760,7140,8040]},{"code":"C10771","name":"Klang Specialist Laboratory","country":"MY","products":["A","B","C"],"prior_month":14218,"recent_month":2935,"at_risk_year":135395,"real":true,"trend":[10125,10200,8475,8435,1260,2690,3840,2700,3800,1260,4665,2880]},{"code":"C10674","name":"Johor Bahru Cancer Diagnostics","country":"MY","products":["A"],"prior_month":14190,"recent_month":4980,"at_risk_year":110520,"real":true,"trend":[19260,13680,16020,14580,8460,7920,0,4140,0,4860,4860,5220]},{"code":"C10741","name":"Penang Pacific Laboratory","country":"MY","products":["A"],"prior_month":7620,"recent_month":1560,"at_risk_year":72720,"real":true,"trend":[7920,6300,0,0,2340,2340,1260,1800,1800,1800,1800,1080]},{"code":"C10633","name":"Tampines Regional Medical Centre","country":"SG","products":["A","C"],"prior_month":7256,"recent_month":1773,"at_risk_year":65790,"real":true,"trend":[6800,7710,8740,4320,5425,15680,5900,5985,1440,1620,2495,1205]},{"code":"C11048","name":"Nha Trang Heart Laboratory","country":"VN","products":["A"],"prior_month":7935,"recent_month":2460,"at_risk_year":65700,"real":true,"trend":[14400,10080,10980,11880,5580,4500,3420,3600,2700,2520,2520,2340]},{"code":"C11263","name":"Manila Mercy Polyclinic","country":"PH","products":["A"],"prior_month":2760,"recent_month":0,"at_risk_year":33120,"real":false,"trend":[2520,0,4320,2700,2700,0,3060,2880,0,0,0,0]},{"code":"C11219","name":"Quezon City Cancer Polyclinic","country":"PH","products":["A","B"],"prior_month":2080,"recent_month":520,"at_risk_year":18720,"real":true,"trend":[3060,3060,1620,2280,2640,2640,840,1260,1140,360,780,420]}],"dropoffs_before":[{"code":"C10808","name":"Kuching Women's & Children's Hospital","country":"MY","products":["A","B","C"],"prior_month":35640,"recent_month":6575,"at_risk_year":348775,"real":true,"trend":[34130,37685,56245,23475,11325,16325,16385,12340,8125,7355,7195,5175],"survives":true,"explain":""},{"code":"C10804","name":"Ipoh Riverside Medical Centre","country":"MY","products":["A","B","C"],"prior_month":19892,"recent_month":1048,"at_risk_year":226130,"real":true,"trend":[17210,16570,12785,7925,4095,2675,3155,2500,1605,1015,1065,1065],"survives":true,"explain":""},{"code":"C10716","name":"Melaka United Laboratory","country":"MY","products":["A","B"],"prior_month":22850,"recent_month":6980,"at_risk_year":190440,"real":true,"trend":[10920,29880,18840,18660,7620,5580,6900,7920,5040,5760,7140,8040],"survives":true,"explain":""},{"code":"C11089","name":"Hanoi Regional Medical Centre","country":"VN","products":["A","B","C"],"prior_month":14977,"recent_month":0,"at_risk_year":179720,"real":false,"trend":[15120,5890,20990,26815,8040,5040,0,0,0,0,0,0],"survives":false,"explain":"Still ordering as \"Hanoi Regional Medical Ctr JSC\" (C20079)"},{"code":"C10760","name":"Kuching Eastern Pathology Lab","country":"MY","products":["A","C"],"prior_month":14722,"recent_month":0,"at_risk_year":176670,"real":false,"trend":[17065,33490,9000,0,0,0,0,0,0,0,0,0],"survives":false,"explain":"Still ordering as \"KUCHING EASTERN PATHOLOGY LAB SDN BHD\" (C20075)"},{"code":"C11282","name":"Manila Women's & Children's Medical Centre","country":"PH","products":["A","B"],"prior_month":12935,"recent_month":0,"at_risk_year":155220,"real":false,"trend":[12540,18600,15540,6720,0,0,0,0,0,0,0,0],"survives":false,"explain":"Still ordering as \"Manila Women's & Children's Med Ctr\" (C20082)"},{"code":"C10771","name":"Klang Specialist Laboratory","country":"MY","products":["A","B","C"],"prior_month":14218,"recent_month":2935,"at_risk_year":135395,"real":true,"trend":[10125,10200,8475,8435,1260,2690,3840,2700,3800,1260,4665,2880],"survives":true,"explain":""},{"code":"C10674","name":"Johor Bahru Cancer Diagnostics","country":"MY","products":["A"],"prior_month":14190,"recent_month":4980,"at_risk_year":110520,"real":true,"trend":[19260,13680,16020,14580,8460,7920,0,4140,0,4860,4860,5220],"survives":true,"explain":""},{"code":"C10741","name":"Penang Pacific Laboratory","country":"MY","products":["A"],"prior_month":7620,"recent_month":1560,"at_risk_year":72720,"real":true,"trend":[7920,6300,0,0,2340,2340,1260,1800,1800,1800,1800,1080],"survives":true,"explain":""},{"code":"C10633","name":"Tampines Regional Medical Centre","country":"SG","products":["A","C"],"prior_month":7256,"recent_month":1773,"at_risk_year":65790,"real":true,"trend":[6800,7710,8740,4320,5425,15680,5900,5985,1440,1620,2495,1205],"survives":true,"explain":""},{"code":"C11048","name":"Nha Trang Heart Laboratory","country":"VN","products":["A"],"prior_month":7935,"recent_month":2460,"at_risk_year":65700,"real":true,"trend":[14400,10080,10980,11880,5580,4500,3420,3600,2700,2520,2520,2340],"survives":true,"explain":""},{"code":"C10145","name":"Chiang Mai Medical Laboratory","country":"TH","products":["A","B"],"prior_month":4840,"recent_month":0,"at_risk_year":58080,"real":false,"trend":[5580,4560,3960,3060,6720,4980,4800,0,0,0,0,0],"survives":false,"explain":"Still ordering as \"Chiang Mai Medical Lab Co., Ltd.\" (C20073)"},{"code":"C10546","name":"Tampines Community Pathology Lab","country":"SG","products":["A","C"],"prior_month":4129,"recent_month":0,"at_risk_year":49550,"real":false,"trend":[4505,2375,5020,3060,0,3240,0,0,0,0,0,0],"survives":false,"explain":"Still ordering as \"Tampines Community Pathology Lab Pte Ltd\" (C20087)"},{"code":"C11263","name":"Manila Mercy Polyclinic","country":"PH","products":["A"],"prior_month":2760,"recent_month":0,"at_risk_year":33120,"real":false,"trend":[2520,0,4320,2700,2700,0,3060,2880,0,0,0,0],"survives":true,"explain":""},{"code":"C11104","name":"Da Nang Regional Health Centre","country":"VN","products":["A","B","C"],"prior_month":2536,"recent_month":0,"at_risk_year":30430,"real":false,"trend":[0,4385,5520,1620,2320,1080,0,0,0,0,0,0],"survives":false,"explain":"Still ordering as \"Da Nang Regional Health Ctr JSC\" (C20097)"},{"code":"C11058","name":"Hai Phong Regional Pathology Lab","country":"VN","products":["A","B"],"prior_month":2285,"recent_month":0,"at_risk_year":27420,"real":false,"trend":[1260,2100,3300,1620,0,0,0,0,0,0,0,0],"survives":false,"explain":"Still ordering as \"Hai Phong Regional Pathology Lab JSC\" (C20090)"},{"code":"C10778","name":"Ipoh Specialist Pathology Lab","country":"MY","products":["A"],"prior_month":1860,"recent_month":0,"at_risk_year":22320,"real":false,"trend":[2160,2160,0,1440,1440,1980,0,0,0,0,0,0],"survives":false,"explain":"Still ordering as \"IPOH SPEC PATHOLOGY LAB SDN BHD\" (C20077)"},{"code":"C11219","name":"Quezon City Cancer Polyclinic","country":"PH","products":["A","B"],"prior_month":2080,"recent_month":520,"at_risk_year":18720,"real":true,"trend":[3060,3060,1620,2280,2640,2640,840,1260,1140,360,780,420],"survives":true,"explain":""}],"accounts":{"C10012":{"value":137820,"products":["A","B","C"],"last":"2026-09","records":2,"since":"2023-01"},"C10145":{"value":61620,"products":["A","B"],"last":"2026-09","records":2,"since":"2023-01"},"C10230":{"value":30685,"products":["C"],"last":"2026-09","records":1,"since":"2023-01"},"C10233":{"value":130165,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10311":{"value":57060,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10402":{"value":143160,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10505":{"value":200950,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10512":{"value":106225,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10518":{"value":11060,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10526":{"value":179870,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10532":{"value":59220,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10537":{"value":22320,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10543":{"value":64220,"products":["A","B","C"],"last":"2026-09","records":2,"since":"2023-01"},"C10546":{"value":47765,"products":["A","C"],"last":"2026-09","records":2,"since":"2023-01"},"C10550":{"value":105840,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10554":{"value":90540,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10561":{"value":548180,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10569":{"value":81420,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10577":{"value":143580,"products":["A","B","C"],"last":"2026-09","records":2,"since":"2023-01"},"C10581":{"value":110520,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10585":{"value":237780,"products":["A"],"last":"2026-09","records":1,"since":"2024-01"},"C10589":{"value":58140,"products":["A"],"last":"2026-08","records":1,"since":"2023-01"},"C10595":{"value":190455,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10600":{"value":80290,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10606":{"value":50350,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10613":{"value":47430,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10618":{"value":50160,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10626":{"value":81180,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10633":{"value":67320,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10638":{"value":126180,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10646":{"value":25740,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10654":{"value":116605,"products":["B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10658":{"value":56340,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10661":{"value":22320,"products":["A"],"last":"2026-09","records":1,"since":"2023-09"},"C10666":{"value":209190,"products":["A","C"],"last":"2026-09","records":2,"since":"2023-01"},"C10674":{"value":99000,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10682":{"value":27720,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10688":{"value":4320,"products":["A"],"last":"2026-06","records":1,"since":"2023-01"},"C10692":{"value":68400,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10695":{"value":107460,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10702":{"value":31540,"products":["C"],"last":"2026-09","records":1,"since":"2023-01"},"C10710":{"value":138020,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10716":{"value":132300,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10719":{"value":132480,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10722":{"value":72125,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10728":{"value":75845,"products":["B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10733":{"value":111355,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10736":{"value":65520,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10741":{"value":28440,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10748":{"value":22680,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10752":{"value":31200,"products":["A","B"],"last":"2026-09","records":2,"since":"2023-01"},"C10760":{"value":190915,"products":["A","C"],"last":"2026-09","records":2,"since":"2023-01"},"C10766":{"value":159965,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10771":{"value":60330,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10774":{"value":16380,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10778":{"value":16920,"products":["A"],"last":"2026-09","records":2,"since":"2023-01"},"C10784":{"value":8820,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10787":{"value":76980,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10791":{"value":27600,"products":["A","B"],"last":"2026-09","records":2,"since":"2023-01"},"C10796":{"value":49680,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10801":{"value":234250,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10804":{"value":71665,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10808":{"value":235760,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10816":{"value":50280,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10824":{"value":13440,"products":["B"],"last":"2026-09","records":1,"since":"2023-01"},"C10828":{"value":101055,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10836":{"value":57240,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10842":{"value":24410,"products":["A","B","C"],"last":"2026-09","records":2,"since":"2023-02"},"C10848":{"value":46735,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10854":{"value":150495,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10860":{"value":25460,"products":["C"],"last":"2026-09","records":1,"since":"2023-01"},"C10864":{"value":105885,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10871":{"value":136200,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10878":{"value":53040,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10881":{"value":10620,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10889":{"value":50880,"products":["A","B"],"last":"2026-08","records":1,"since":"2023-01"},"C10893":{"value":190050,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-12"},"C10897":{"value":67050,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10903":{"value":284355,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10908":{"value":406285,"products":["A","B","C"],"last":"2026-09","records":2,"since":"2023-01"},"C10913":{"value":26645,"products":["B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10921":{"value":162360,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10924":{"value":113880,"products":["A","B"],"last":"2026-09","records":1,"since":"2025-10"},"C10930":{"value":136320,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10934":{"value":34845,"products":["B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10939":{"value":34200,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C10947":{"value":18360,"products":["A"],"last":"2026-09","records":2,"since":"2023-01"},"C10950":{"value":53540,"products":["A","C"],"last":"2026-09","records":2,"since":"2023-01"},"C10953":{"value":86040,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10956":{"value":94100,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10962":{"value":302245,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10970":{"value":82770,"products":["A","C"],"last":"2026-09","records":2,"since":"2023-01"},"C10978":{"value":13320,"products":["A"],"last":"2026-09","records":1,"since":"2023-03"},"C10985":{"value":45960,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C10991":{"value":162505,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C10997":{"value":207420,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C11005":{"value":89795,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C11011":{"value":104970,"products":["A","C"],"last":"2026-09","records":2,"since":"2023-01"},"C11015":{"value":88920,"products":["B","C"],"last":"2026-09","records":2,"since":"2023-01"},"C11019":{"value":64020,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C11027":{"value":199930,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C11035":{"value":49970,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C11040":{"value":91235,"products":["B","C"],"last":"2026-09","records":2,"since":"2023-01"},"C11045":{"value":49380,"products":["A","B"],"last":"2026-09","records":1,"since":"2025-06"},"C11048":{"value":74520,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11055":{"value":89880,"products":["A","B"],"last":"2026-09","records":2,"since":"2023-01"},"C11058":{"value":28560,"products":["A","B"],"last":"2026-09","records":2,"since":"2023-01"},"C11062":{"value":112700,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C11067":{"value":137580,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C11075":{"value":176885,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C11083":{"value":40680,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11089":{"value":166925,"products":["A","B","C"],"last":"2026-09","records":2,"since":"2023-01"},"C11097":{"value":131225,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C11104":{"value":29825,"products":["A","B","C"],"last":"2026-09","records":2,"since":"2023-01"},"C11108":{"value":70320,"products":["B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C11115":{"value":58080,"products":["A","B"],"last":"2026-09","records":1,"since":"2025-04"},"C11120":{"value":260865,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2025-09"},"C11125":{"value":95980,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2025-07"},"C11133":{"value":11880,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11141":{"value":15240,"products":["A","B"],"last":"2026-09","records":1,"since":"2025-06"},"C11148":{"value":128110,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C11152":{"value":256415,"products":["A","B","C"],"last":"2026-09","records":2,"since":"2023-01"},"C11155":{"value":104345,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2025-09"},"C11160":{"value":140230,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C11164":{"value":178200,"products":["A","B"],"last":"2026-09","records":1,"since":"2025-07"},"C11170":{"value":68730,"products":["A","B","C"],"last":"2026-09","records":2,"since":"2023-01"},"C11177":{"value":155230,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2025-11"},"C11182":{"value":16020,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11190":{"value":10830,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C11193":{"value":306520,"products":["A","B","C"],"last":"2026-09","records":2,"since":"2023-01"},"C11201":{"value":98745,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C11206":{"value":63900,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11209":{"value":158575,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2026-02"},"C11212":{"value":18360,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11216":{"value":17880,"products":["A","B"],"last":"2026-09","records":1,"since":"2026-04"},"C11219":{"value":20100,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C11225":{"value":26100,"products":["A"],"last":"2026-09","records":1,"since":"2023-02"},"C11232":{"value":81480,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C11238":{"value":135240,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C11242":{"value":38340,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11245":{"value":42120,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11252":{"value":74400,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C11256":{"value":73620,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11263":{"value":18180,"products":["A"],"last":"2026-05","records":1,"since":"2023-01"},"C11270":{"value":60995,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-03"},"C11276":{"value":183465,"products":["A","C"],"last":"2026-09","records":2,"since":"2023-01"},"C11282":{"value":182700,"products":["A","B"],"last":"2026-09","records":2,"since":"2023-01"},"C11286":{"value":14940,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11294":{"value":175560,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C11297":{"value":17460,"products":["A"],"last":"2026-09","records":1,"since":"2023-02"},"C11300":{"value":79020,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11304":{"value":148320,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11311":{"value":39240,"products":["A"],"last":"2026-09","records":1,"since":"2023-02"},"C11316":{"value":48420,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11323":{"value":116280,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11329":{"value":128640,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C11333":{"value":6300,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11336":{"value":38160,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11340":{"value":45900,"products":["A","B"],"last":"2026-09","records":1,"since":"2023-01"},"C11346":{"value":70560,"products":["B"],"last":"2026-09","records":1,"since":"2023-01"},"C11350":{"value":10080,"products":["A"],"last":"2026-09","records":1,"since":"2023-01"},"C11357":{"value":191340,"products":["A","B"],"last":"2026-09","records":2,"since":"2023-01"},"C11362":{"value":194265,"products":["A","B","C"],"last":"2026-09","records":1,"since":"2023-01"},"C11370":{"value":98470,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C11377":{"value":107365,"products":["A","C"],"last":"2026-09","records":1,"since":"2023-01"},"C11385":{"value":60480,"products":["A"],"last":"2026-08","records":1,"since":"2023-01"},"C11389":{"value":204000,"products":["A","B"],"last":"2026-09","records":2,"since":"2023-01"},"C11397":{"value":40140,"products":["A","B"],"last":"2026-09","records":2,"since":"2023-01"}},"record_account":{"C20099":"C10012","C20073":"C10145","C20047":"C10543","C20087":"C10546","C20067":"C10577","C20001":"C10666","C20062":"C10752","C20075":"C10760","C20077":"C10778","C20056":"C10791","C20022":"C10842","C20006":"C10908","C20093":"C10947","C20060":"C10950","C20011":"C10970","C20033":"C11011","C20029":"C11015","C20019":"C11040","C20026":"C11055","C20090":"C11058","C20079":"C11089","C20097":"C11104","C20054":"C11152","C20016":"C11170","C20052":"C11193","C20038":"C11276","C20082":"C11282","C20042":"C11357","C20071":"C11389","C20049":"C11397"},"cross_sell":[{"code":"C11346","name":"Iloilo Pacific Hospital","country":"PH","segment":"hospital","product":"A","peers":39,"peer_share":0.97,"est_year":94523,"false":false,"buys":["B"]},{"code":"C10666","name":"Outram Community Medical Centre","country":"SG","segment":"hospital","product":"B","peers":33,"peer_share":0.7,"est_year":79622,"false":false,"buys":["A","C"]},{"code":"C10962","name":"Bangkok Mercy Hospital","country":"TH","segment":"hospital","product":"B","peers":33,"peer_share":0.7,"est_year":79622,"false":false,"buys":["A","C"]},{"code":"C10505","name":"Singapore Community Hospital","country":"SG","segment":"hospital","product":"B","peers":33,"peer_share":0.7,"est_year":76706,"false":false,"buys":["A","C"]},{"code":"C10585","name":"Singapore Eastern Hospital","country":"SG","segment":"hospital","product":"B","peers":59,"peer_share":0.64,"est_year":74119,"false":false,"buys":["A"]},{"code":"C11304","name":"Pasig Sunrise Hospital","country":"PH","segment":"hospital","product":"B","peers":59,"peer_share":0.64,"est_year":69482,"false":false,"buys":["A"]},{"code":"C10766","name":"Kuching Eastern Medical Centre","country":"MY","segment":"hospital","product":"B","peers":33,"peer_share":0.7,"est_year":61061,"false":false,"buys":["A","C"]},{"code":"C10638","name":"Novena Cancer Medical Centre","country":"SG","segment":"hospital","product":"B","peers":59,"peer_share":0.64,"est_year":59110,"false":false,"buys":["A"]},{"code":"C10585","name":"Singapore Eastern Hospital","country":"SG","segment":"hospital","product":"C","peers":59,"peer_share":0.58,"est_year":55348,"false":false,"buys":["A"]},{"code":"C11304","name":"Pasig Sunrise Hospital","country":"PH","segment":"hospital","product":"C","peers":59,"peer_share":0.58,"est_year":55348,"false":false,"buys":["A"]},{"code":"C11323","name":"Baguio Medical Hospital","country":"PH","segment":"hospital","product":"B","peers":59,"peer_share":0.64,"est_year":54472,"false":false,"buys":["A"]},{"code":"C10710","name":"Penang Community Medical Centre","country":"MY","segment":"hospital","product":"B","peers":33,"peer_share":0.7,"est_year":52684,"false":false,"buys":["A","C"]}],"traffic":{"by_country":{"MY":{"po":424,"enq":224,"setup":55},"PH":{"po":409,"enq":225,"setup":53},"SG":{"po":392,"enq":221,"setup":61},"TH":{"po":445,"enq":219,"setup":58},"VN":{"po":437,"enq":202,"setup":76}},"monthly":{"po":[174,172,177,180,174,177,175,179,170,167,180,182],"enq":[85,91,89,77,91,94,93,101,92,87,100,91],"setup":[26,24,23,26,27,32,24,25,28,22,23,23]},"waiting":{"orders":78,"value":235538,"avg_wait":14.2,"hub_target":4.0,"by_country":{"MY":9,"PH":15,"SG":19,"TH":8,"VN":27}}},"actions":[{"who":"Regional Sales, Malaysia","title":"Win back 6 Malaysia accounts before year-end","body":"Malaysia is the only country shrinking: Product B -23%, Product A -21% on last year. 6 accounts there now order less than half of what they did a year ago. Across the region, 10 accounts are on the drop-off list, about SGD 1,267k a year at risk.","metric":"SGD 1,267k/yr at risk"},{"who":"Supply chain and QTS","title":"Plan stock for Product B growth in Vietnam","body":"Product B in Vietnam is +70% year on year, driven by newly onboarded labs. A flat 12-month average under-forecasts a growing series every month. Use the model's October forecast (340 units, vs 293 from the 12-month average) for replenishment.","metric":"+70% YoY"},{"who":"Product managers","title":"Cross-sell Product B in Singapore","body":"97 account-product gaps where most similar customers already buy the product. The largest pocket is Product B in Singapore (SGD 553k a year). The call list below is ranked by estimated value.","metric":"SGD 3,170k/yr potential"},{"who":"MDM team","title":"Merge the duplicate customer records first","body":"30 duplicate records found and 30 merges suggested. Before merging, 9 of 18 drop-off alerts and 32 cross-sell leads were false: the customer was still buying under another record.","metric":"41 false leads removed"}],"assumptions":{"xs_conversion":0.1,"forecast_days_per_country_month":1,"hub_setup_days":4.0,"drop_rule":"Last 3 months (Jul - Sep 2026) average below half of the same account's monthly average a year earlier, for accounts that bought at least SGD 1.5k a month.","xs_rule":"Peers are customers in the same segment (hospital, lab, clinic) that buy everything this account buys. A gap is flagged when at least half of those peers also buy the missing product; value = share of peers x their median annual spend on it, scaled to the account's size."}};/*END_REGIONAL_DATA*/
+const RG = REGIONAL;
+const PRODS = ['A', 'B', 'C'];
+const fmtN = n => Math.round(n).toLocaleString('en-SG');
+const fmtK = n => { const a = Math.abs(n); return a >= 1e6 ? (n / 1e6).toFixed(a >= 1e7 ? 1 : 2).replace(/\.?0+$/, '') + 'M' : a >= 1e4 ? Math.round(n / 1e3) + 'k' : a >= 1e3 ? (n / 1e3).toFixed(1).replace(/\.0$/, '') + 'k' : String(Math.round(n)); };
+const sgd = n => 'SGD ' + fmtK(n);
+const pct = (x, d) => (x > 0.0005 ? '+' : x < -0.0005 ? '−' : '') + Math.abs(x * 100).toFixed(d || 0) + '%';
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const monLbl = (m, yr) => MON[+m.slice(5, 7) - 1] + (yr === false ? '' : yr === 'full' ? ' ' + m.slice(0, 4) : ' ’' + m.slice(2, 4));
+const METHOD = { avg12: '12-month average', avg6: '6-month average', hw: 'Seasonal statistical model', gbm: 'Calendar-aware model', ens: 'Blend' };
+
+function seriesFor(key) {
+  const [c, p] = key.split('-');
+  const keys = Object.keys(RG.series).filter(k => { const [kc, kp] = k.split('-'); return (c === 'ALL' || kc === c) && (p === 'ALL' || kp === p); });
+  const sum = get => get(RG.series[keys[0]]).map((_, i) => keys.reduce((a, k) => a + get(RG.series[k])[i], 0));
+  return { actual: sum(s => s.actual), gbm: sum(s => s.bt.gbm), avg6: sum(s => s.bt.avg6), avg12: sum(s => s.bt.avg12), future: sum(s => s.future) };
+}
+function errOf(actual, f) { const a = actual.slice(-f.length); let e = 0, t = 0; a.forEach((v, i) => { e += Math.abs(v - f[i]); t += v; }); return t ? e / t : 0; }
+function selLabel(key) {
+  const [c, p] = key.split('-');
+  return (p === 'ALL' ? 'All products' : 'Product ' + p) + ', ' + (c === 'ALL' ? 'all five countries' : RG.countries[c]);
+}
+function growthBg(g) {
+  if (g == null) return 'var(--surface)';
+  const k = Math.round(Math.min(Math.abs(g) / 0.4, 1) * 50);
+  return `color-mix(in srgb, var(${g >= 0 ? '--pos' : '--neg'}) ${k}%, var(--surface))`;
+}
+
+function viewRegional() {
+  if (!RG) return '<div class="empty">Regional data not built. Run <span class="mono">python3 analytics/build.py</span>.</div>';
+  const sel = ui.rsel || 'ALL-ALL';
+  const cells = RG.cells, cell = (c, p) => cells.find(x => x.country === c && x.product === p);
+  const prev = (list) => list.reduce((a, x) => a + x.units / (1 + x.growth), 0);
+  const agg = list => { const u = list.reduce((a, x) => a + x.units, 0); return { units: u, growth: u / prev(list) - 1 }; };
+  const btn = (key, d, strong) => `<button class="cellbtn" data-act="rsel" data-k="${key}" aria-pressed="${sel === key}" style="background:${growthBg(d.growth)}" title="Show ${esc(selLabel(key))} in the forecast chart"><b>${strong ? '' : ''}${fmtN(d.units)}</b><span>${pct(d.growth)}</span></button>`;
+  const countries = Object.keys(RG.countries);
+  const matrix = `<div class="tablewrap"><table class="matrix"><thead><tr><th>Country</th>${PRODS.map(p => `<th>Product ${p}</th>`).join('')}<th>All products</th><th>Order value</th></tr></thead><tbody>
+    ${countries.map(c => `<tr><td><b>${esc(RG.countries[c])}</b><div class="muted" style="font-size:12px">${RG.cells.filter(x => x.country === c).reduce((a, x) => Math.max(a, x.buyers), 0)} active accounts</div></td>${PRODS.map(p => `<td class="c">${btn(c + '-' + p, cell(c, p))}</td>`).join('')}<td class="c">${btn(c + '-ALL', agg(cells.filter(x => x.country === c)))}</td><td class="mono">${sgd(RG.regional.by_country[c].value)}<div class="muted">${pct(RG.regional.by_country[c].growth)}</div></td></tr>`).join('')}
+    <tr class="total"><td><b>All five countries</b></td>${PRODS.map(p => `<td class="c">${btn('ALL-' + p, agg(cells.filter(x => x.product === p)))}</td>`).join('')}<td class="c">${btn('ALL-ALL', { units: RG.regional.units, growth: RG.regional.growth })}</td><td class="mono">${sgd(RG.regional.value)}<div class="muted">${pct(RG.regional.value_growth)}</div></td></tr>
+  </tbody></table></div>`;
+
+  const acc = RG.accuracy, base = RG.best_baseline;
+  const cut = 1 - acc.gbm / acc[base];
+  const accRows = ['avg12', 'avg6', 'hw', 'gbm'].map(m => ({ m, v: acc[m] }));
+  const maxAcc = Math.max(...accRows.map(r => r.v));
+  const imp = RG.importance;
+  const cl = RG.cleanup, dd = RG.dedup;
+  const risk = RG.dropoffs.reduce((a, d) => a + d.at_risk_year, 0);
+  const xsAll = RG.cleanup.after.xs_value, conv = RG.assumptions.xs_conversion;
+
+  // live counts from the hub itself
+  const convs = S.requests.filter(r => r.kind === 'conv');
+  const livePO = convs.filter(r => r.cls.kind === 'po').length, liveEnq = convs.length - livePO;
+  const liveSetup = S.requests.filter(r => r.kind === 'mdm' && (r.state === 'open' || r.state === 'info')).length;
+
+  const tr = RG.traffic, w = tr.waiting;
+  const trafficRows = countries.map(c => { const t = tr.by_country[c], tot = t.po + t.enq + t.setup;
+    return `<tr><td>${esc(RG.countries[c])}</td><td class="mono">${fmtN(t.po)}</td><td class="mono">${fmtN(t.enq)}</td><td class="mono">${fmtN(t.setup)}</td><td><div class="stack" aria-hidden="true"><i style="flex:${t.po};background:var(--s1)"></i><i style="flex:${t.enq};background:var(--s2)"></i><i style="flex:${t.setup};background:var(--s3)"></i></div></td><td class="mono">${w.by_country[c] || 0}</td></tr>`; }).join('');
+
+  const spark = (vals) => { const W = 84, H = 22, mx = Math.max(...vals, 1); const pts = vals.map((v, i) => `${(i / (vals.length - 1) * W).toFixed(1)},${(H - 2 - v / mx * (H - 4)).toFixed(1)}`).join(' ');
+    return `<svg class="spark" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="var(--neg)" stroke-width="1.5" stroke-linejoin="round"/></svg>`; };
+
+  return `<div class="head"><div><h2>Regional business view</h2><p>Customer purchase orders for Products A, B and C in five countries over <b style="white-space:nowrap">${monLbl(RG.period.from, 'full')} – ${monLbl(RG.period.to, 'full')}</b>, read from SAP B1 order history after duplicate customer records are merged. Forecasts and call lists refresh monthly.</p></div><span class="tag sim" title="The brief provides no data. analytics/generate_data.py builds it, with every pattern planted on purpose.">Simulated data</span></div>
+
+  <div class="stats">
+    <div class="stat"><b>${sgd(RG.regional.value)}</b><span>orders in 12 months · ${pct(RG.regional.value_growth)} on last year</span></div>
+    <div class="stat"><b>${(acc[base] * 100).toFixed(1)}% → ${(acc.gbm * 100).toFixed(1)}%</b><span>monthly forecast miss, today's method vs model (${Math.round(cut * 100)}% smaller)</span></div>
+    <div class="stat"><b>${sgd(risk)}</b><span>a year at risk from ${RG.dropoffs.length} accounts dropping off</span></div>
+    <div class="stat"><b>${dd.records} → ${dd.accounts_after}</b><span>customer records after merging duplicates</span></div>
+  </div>
+
+  <section class="section"><h3>Orders and growth by country and product</h3>
+    <p class="muted" style="margin:0">Units ordered in the 12 months, with growth on the same 12 months a year earlier. Same-month comparison cancels out Chinese New Year, Raya, Songkran and budget cycles. Select any cell to see its forecast below.</p>
+    ${matrix}
+    <div class="scale"><span>Growth</span><i style="background:${growthBg(-0.4)}"></i><span>−40%</span><i style="background:${growthBg(-0.15)}"></i><i style="background:var(--surface);border:1px solid var(--line)"></i><span>0</span><i style="background:${growthBg(0.15)}"></i><i style="background:${growthBg(0.4)}"></i><span>+40%</span></div>
+  </section>
+
+  <section class="section"><h3>Forecast: ${esc(selLabel(sel))}</h3>
+    <div class="detail">
+      <div class="panel">
+        <div class="legend" id="trend-legend"></div>
+        <div class="chart" id="trend" role="img" aria-label="Monthly units ordered with forecasts"></div>
+        <p class="muted" style="margin:0;font-size:12.5px">Shaded months are a backtest: each month was forecast using only the data available before it, exactly as it would have run live. The last three points are the forecast for ${FUTURE_LBL()}.</p>
+      </div>
+      <aside class="section">
+        <div class="panel"><h3>Average monthly forecast miss</h3>
+          <ul class="hbars">${accRows.map(r => `<li class="${r.m === 'gbm' ? 'hi' : ''}"><span>${METHOD[r.m]}${r.m === base ? ' <span class="muted">(today)</span>' : ''}</span><span class="mono">${(r.v * 100).toFixed(1)}%</span><div class="bar"><i style="width:${(r.v / maxAcc * 100).toFixed(1)}%"></i></div></li>`).join('')}</ul>
+          <p class="muted" style="margin:0;font-size:12.5px">Units missed as a share of units ordered, over 12 monthly forecasts × 15 country-product series. The model beats both averages on <b>${RG.wins} of ${RG.series_count}</b> series.</p></div>
+        <div class="panel"><h3>What the model looks at</h3>
+          <ul class="hbars">${imp.map(d => `<li><span>${esc(d.driver)}</span><span class="mono">${Math.round(d.share * 100)}%</span><div class="bar"><i style="width:${(d.share / imp[0].share * 100).toFixed(1)}%;background:var(--s1)"></i></div></li>`).join('')}</ul>
+          <p class="muted" style="margin:0;font-size:12.5px">A 6- or 12-month average can't know that Chinese New Year moves between January and February, or that Thai hospitals spend out their budgets in September. The model is told each country's calendar in advance.</p></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section"><h3>What clean master data changes</h3>
+    <div class="detail">
+      <div class="tablewrap"><div class="ba">
+        <div class="h">Signal sent to Sales</div><div class="h">Before merge</div><div class="h">After merge</div>
+        <div>Customers ordering in the 12 months</div><div>${cl.before.customers}</div><div>${cl.after.customers}</div>
+        <div>Drop-off alerts</div><div>${cl.before.drop_alerts}<span class="bad">${cl.before.drop_false} false</span></div><div>${cl.after.drop_alerts}<span class="muted" style="font-size:12px;display:block">${cl.after.drop_false} false</span></div>
+        <div>Cross-sell leads that are already customers</div><div>${cl.before.xs_false}<span class="bad">of ${cl.before.xs_gaps} leads</span></div><div>${cl.after.xs_false}<span class="muted" style="font-size:12px;display:block">of ${cl.after.xs_gaps} leads</span></div>
+        <div>"New" customers who had bought for years</div><div>${cl.before.ghost_new}</div><div>${cl.after.ghost_new}</div>
+      </div></div>
+      <div class="panel"><h3>Duplicates found</h3>
+        <p style="margin:0">${dd.caught} of ${dd.planted} duplicate records found, with ${dd.false_merges} wrong merges: ${dd.caught - (dd.by_tax || []).length} by name, ${(dd.by_tax || []).length} by tax ID. Same checks as the request form, so new duplicates are stopped at intake.</p>
+        ${(dd.by_tax || []).map(x => `<p class="muted" style="margin:0;font-size:12.5px">Tax ID caught what names can't: "${esc(x.name)}" (${esc(x.record)}) is ${esc(x.matches_name)}.</p>`).join('')}
+        ${dd.examples.slice(0, 3).map(x => `<div class="dup"><span>${esc(x.keep_name)}<br><span class="muted" style="font-size:12px">${x.others.map(o => esc(o.name)).join(' · ')}</span></span><span class="mono">${esc(x.keep)}</span></div>`).join('')}
+        ${dd.missed_examples.length ? `<p class="muted" style="margin:0;font-size:12.5px">Missed: ${dd.missed_examples.map(m => `"${esc(m.name)}" (${esc(m.is_really)})`).join(', ')}. Acronyms need a tax-ID match, which SAP B1 holds for active accounts.</p>` : ''}
+      </div>
+    </div>
+    <p class="muted" style="margin:0">Regional totals barely move when records are merged. The damage is at account level, where Sales acts: a customer who moved to a new record looks like a lost account, and one who buys Product B through QTS looks like a cross-sell target for SPD.</p>
+  </section>
+
+  ${whatIfSection()}
+
+  <section class="section"><h3>Recommended actions</h3>
+    <div class="acts4">${RG.actions.map(a => `<div class="act"><p class="who">${esc(a.who)}</p><b>${esc(a.title)}</b><p>${esc(a.body)}</p><span class="num">${esc(a.metric)}</span></div>`).join('')}</div>
+  </section>
+
+  ${dropSection(spark)}
+    <p class="muted" style="margin:0;font-size:12.5px">${esc(RG.assumptions.drop_rule)}</p>
+  </section>
+
+  <section class="section"><h3>Call list: cross-sell · top ${RG.cross_sell.length}</h3>
+    <div class="tablewrap"><table><thead><tr><th>Account</th><th>Country</th><th>Buys today</th><th>Suggest</th><th>Similar customers who buy it</th><th>Est. value / year</th></tr></thead><tbody>
+    ${RG.cross_sell.map(d => `<tr><td>${esc(d.name)} <span class="mono muted">${esc(d.code)}</span></td><td>${esc(RG.countries[d.country])}</td><td>${d.buys.map(p => 'Product ' + p).join(', ')}</td><td><b>Product ${d.product}</b></td><td class="mono">${Math.round(d.peer_share * 100)}% of ${d.peers}</td><td class="mono"><b>${sgd(d.est_year)}</b></td></tr>`).join('')}
+    </tbody></table></div>
+    <p class="muted" style="margin:0;font-size:12.5px">${cl.after.xs_gaps - cl.after.xs_false} gaps in total, worth ${sgd(xsAll)} a year if every one converted. At an assumed 1 in ${Math.round(1 / conv)} conversion: <b>${sgd(xsAll * conv)} a year</b>. ${esc(RG.assumptions.xs_rule)}</p>
+  </section>
+
+  <section class="section"><h3>Purchase orders, enquiries and MDM setup requests</h3>
+    <p class="muted" style="margin:0">These arrive in the same mailboxes today. The Customer inbox tags each one, so forecasts count only real orders and setup requests go to MDM instead of Sales.</p>
+    <div class="detail">
+      <div class="tablewrap"><table><thead><tr><th>Country</th><th>Purchase orders</th><th>Enquiries</th><th>MDM setup</th><th>Mix</th><th>Orders that waited on setup</th></tr></thead><tbody>${trafficRows}</tbody></table>
+        <div class="legend" style="padding:8px 10px"><span><i class="sw box" style="background:var(--s1)"></i>Purchase orders</span><span><i class="sw box" style="background:var(--s2)"></i>Enquiries</span><span><i class="sw box" style="background:var(--s3)"></i>MDM setup requests</span><span>Counts over the 12 months</span></div></div>
+      <div class="panel"><h3>Orders waiting on customer setup</h3>
+        <p style="margin:0"><b>${w.orders} purchase orders</b> worth <b>${sgd(w.value)}</b> came from customers not yet in SAP B1. They waited <b>${w.avg_wait} days</b> on average for the account to be set up by email.</p>
+        <p class="muted" style="margin:0">With intake checks, parallel-ready routing and 48h reminders, the hub targets ${w.hub_target} days (assumption). That is about ${Math.round(w.avg_wait - w.hub_target)} days sooner to invoice on every new account's first order.</p>
+        <div class="callout info"><div class="live"><b>Live in this hub now</b><span>${livePO} purchase order${livePO === 1 ? '' : 's'}</span><span>${liveEnq} enquir${liveEnq === 1 ? 'y' : 'ies'}</span><span>${liveSetup} setup request${liveSetup === 1 ? '' : 's'} in approval</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <details class="method panel"><summary>Method and assumptions</summary><ul>
+    <li><b>Data.</b> Simulated, because the brief ships none: ${dd.true_accounts} customer accounts saved as ${dd.records} SAP B1 records, monthly orders Jan 2023 – Sep 2026. Seasonality, a Malaysian decline, Vietnamese growth and ${dd.planted} duplicate records were planted on purpose so the results can be checked against the truth. Code: <span class="mono">analytics/</span> in the repo.</li>
+    <li><b>Growth.</b> ${esc(RG.growth_definition)}</li>
+    <li><b>Forecast.</b> Today's method is a rolling 6- or 12-month average. The model is a gradient-boosted tree (the XGBoost family) trained across all 15 country-product series on recent months, the same month last year, and each country's holiday and budget calendar. Scored by forecasting each month from Oct 2025 to Sep 2026 with only earlier data.</li>
+    <li><b>Duplicates.</b> Names normalised (legal suffixes dropped, "Natl Univ Hosp" read as National University Hospital) and compared within each country; merged at ${Math.round(dd.threshold * 100)}% similarity. In production MDM confirms each merge.</li>
+    <li><b>Prices.</b> Assumed average selling price per unit: Product A SGD ${RG.price.A}, B SGD ${RG.price.B}, C SGD ${RG.price.C}.</li>
+    <li><b>Productivity.</b> Assumed today: ${RG.assumptions.forecast_days_per_country_month} analyst-day per country per month to pull SAP B1 history into a spreadsheet forecast, about ${RG.assumptions.forecast_days_per_country_month * 5 * 12} days a year. This view refreshes from SAP B1 on a schedule.</li>
+    <li><b>Production.</b> SAP B1 order history exported nightly (Service Layer or a saved query) to SharePoint, the Python job run monthly, results shown in Power BI or this tab. Built ${esc(RG.generated)}.</li>
+  </ul></details>`;
+}
+/* ---------- business case calculator ---------- */
+const WI_DEFAULT = { conv: 10, winback: 20, margin: 25, setup: 4, reqs: 60, mins: 45, rate: 45, build: 60000, run: 15000 };
+const WI_SPEC = [
+  ['conv', 'Cross-sell leads that convert', 0, 50, 5, v => v + '%'], ['winback', 'At-risk revenue won back', 0, 60, 5, v => v + '%'],
+  ['margin', 'Gross margin on that revenue', 10, 60, 5, v => v + '%'], ['setup', 'Customer setup time with the hub', 2, 18, 1, v => v + ' days'],
+  ['reqs', 'MDM requests a month', 10, 200, 10, v => v], ['mins', 'Minutes saved per request (chasing, re-keying, rework)', 0, 120, 5, v => v + ' min'],
+  ['rate', 'Loaded staff cost per hour', 20, 100, 5, v => 'SGD ' + v], ['build', 'One-off build (Power Platform partner)', 10000, 150000, 5000, v => 'SGD ' + fmtK(v)],
+  ['run', 'Running cost a year (licences, support)', 0, 60000, 5000, v => 'SGD ' + fmtK(v)],
+];
+function whatIfCalc(w) {
+  const xs = RG.cleanup.after.xs_value * w.conv / 100;
+  const risk = RG.dropoffs.reduce((a, d) => a + d.at_risk_year, 0) * w.winback / 100;
+  const revenue = (xs + risk) * w.margin / 100;
+  const forecastHours = RG.assumptions.forecast_days_per_country_month * 5 * 12 * 8;
+  const prod = (w.reqs * 12 * w.mins / 60 + forecastHours) * w.rate;
+  const gross = revenue + prod, net = gross - w.run;
+  const wt = RG.traffic.waiting, sooner = Math.max(0, wt.avg_wait - w.setup);
+  return { xs, risk, revenue, prod, gross, net, payback: net > 0 ? w.build / (net / 12) : null, sooner, waitingValue: wt.value, hours: w.reqs * 12 * w.mins / 60 + forecastHours };
+}
+function whatIfSection() {
+  const w = ui.wi || WI_DEFAULT;
+  return `<section class="section"><div class="head" style="align-items:center"><h3>Business case: drag to test the assumptions</h3><button class="btn small" data-act="wi-reset">Reset</button></div>
+    <div class="detail"><div class="panel wi">${WI_SPEC.map(([k, label, mn, mx, st, f]) => `<label class="wi-row"><span>${esc(label)}</span><b id="wv-${k}">${f(w[k])}</b><input type="range" min="${mn}" max="${mx}" step="${st}" value="${w[k]}" data-wi="${k}" aria-label="${esc(label)}"></label>`).join('')}</div>
+    <div class="panel" id="wi-out" aria-live="polite">${whatIfOut(w)}</div></div></section>`;
+}
+function whatIfOut(w) {
+  const c = whatIfCalc(w), bars = [['Margin on cross-sell', c.xs * w.margin / 100], ['Margin on won-back accounts', c.risk * w.margin / 100], ['Staff time freed', c.prod]];
+  const mx = Math.max(...bars.map(b => b[1]), 1);
+  return `<span class="muted">Net value a year</span><b class="wi-big">${sgd(c.net)}</b>
+    <p style="margin:0">${c.payback == null ? 'Does not pay back at these settings.' : `Pays back the ${sgd(w.build)} build in <b>${c.payback < 1 ? 'under a month' : c.payback.toFixed(1) + ' months'}</b>.`}</p>
+    <ul class="hbars">${bars.map(([l, v]) => `<li><span>${l}</span><span class="mono">${sgd(v)}</span><div class="bar"><i style="width:${(v / mx * 100).toFixed(1)}%;background:var(--s1)"></i></div></li>`).join('')}</ul>
+    <p class="muted" style="margin:0;font-size:12.5px">Minus ${sgd(w.run)} running cost. Staff time: ${fmtN(c.hours)} hours a year, including ${RG.assumptions.forecast_days_per_country_month * 5 * 12} analyst-days no longer spent building spreadsheet forecasts.</p>
+    <div class="callout info"><p>New customers' first orders reach invoice <b>${c.sooner.toFixed(0)} days sooner</b> (setup ${RG.traffic.waiting.avg_wait} → ${w.setup} days) on ${sgd(c.waitingValue)} of orders a year. Cash arrives earlier; not counted as extra value above.</p></div>`;
+}
+function updateWhatIf() {
+  const w = ui.wi || WI_DEFAULT;
+  WI_SPEC.forEach(([k, , , , , f]) => { const el = document.getElementById('wv-' + k); if (el) el.textContent = f(w[k]); });
+  const out = document.getElementById('wi-out'); if (out) out.innerHTML = whatIfOut(w);
+}
+function dropSection(spark) {
+  const mode = ui.dropMode || 'after', B = RG.dropoffs_before, A = RG.dropoffs;
+  const sum = l => l.reduce((a, d) => a + d.at_risk_year, 0);
+  const gone = B.filter(d => !d.survives);
+  const rowH = (d, cls) => `<tr class="${cls || ''}"><td><span class="nm">${esc(d.name)}</span> <span class="mono muted">${esc(d.code)}</span>${cls === 'gone' ? `<div class="why">${esc(d.explain || 'Merged with a duplicate record')}</div>` : ''}</td><td>${esc(RG.countries[d.country])}</td><td>${d.products.join(', ')}</td><td class="mono">${sgd(d.prior_month)}</td><td class="mono">${sgd(d.recent_month)}</td><td>${spark(d.trend)}</td><td class="mono"><b>${sgd(d.at_risk_year)}</b></td></tr>`;
+  const head = `<thead><tr><th>Account</th><th>Country</th><th>Products</th><th>Monthly, a year ago</th><th>Monthly, last 3 months</th><th>Last 12 months</th><th>At risk / year</th></tr></thead>`;
+  const list = mode === 'before' ? B : A;
+  return `<section class="section"><div class="head" style="align-items:center"><h3>Call list: accounts dropping off · ${list.length}</h3>
+      <div class="seg" role="group" aria-label="Customer records"><button aria-pressed="${mode === 'before'}" data-act="dropmode" data-m="before">Before cleanup</button><button aria-pressed="${mode === 'after'}" data-act="dropmode" data-m="after">After cleanup</button></div></div>
+    <div class="callout ${mode === 'before' ? 'warn' : 'info'}"><p>${mode === 'before'
+      ? `<b>${B.length} accounts flagged, ${sgd(sum(B))} a year "at risk".</b> This is the list Sales gets from SAP B1 as it is today, with duplicate customer records left in.`
+      : `<b>${A.length} accounts, ${sgd(sum(A))} a year at risk.</b> Merging duplicates removed ${gone.length} false alerts worth ${sgd(sum(gone))}: those customers never left, they were ordering under a second record.`}</p></div>
+    <div class="tablewrap"><table>${head}<tbody>
+    ${list.map(d => rowH(d)).join('')}
+    ${mode === 'after' ? `<tr class="sub"><td colspan="7">Removed by the cleanup · ${gone.length}</td></tr>${gone.map(d => rowH(d, 'gone')).join('')}` : ''}
+    </tbody></table></div>`;
+}
+function FUTURE_LBL() { return RG.period.future.map(m => monLbl(m, false)).join(', ') + ' ' + RG.period.future[0].slice(0, 4); }
+
+function drawRegional() {
+  const el = document.getElementById('trend'); if (!el || !RG) return;
+  const key = ui.rsel || 'ALL-ALL', s = seriesFor(key), base = RG.best_baseline;
+  const months = RG.period.chart_months.concat(RG.period.future);
+  const nA = s.actual.length, nB = s[base].length, n = months.length, b0 = nA - nB;
+  const W = Math.max(300, el.clientWidth), H = 260, m = { l: 48, r: 14, t: 12, b: 26 };
+  const vals = s.actual.concat(s.gbm, s[base], s.future);
+  const top = niceMax(Math.max(...vals) * 1.05), ticks = 4;
+  const x = i => m.l + (W - m.l - m.r) * i / (n - 1), y = v => m.t + (H - m.t - m.b) * (1 - v / top);
+  const path = (arr, off) => arr.map((v, i) => `${i ? 'L' : 'M'}${x(i + off).toFixed(1)},${y(v).toFixed(1)}`).join('');
+  const half = (W - m.l - m.r) / (n - 1) / 2;
+  let g = '';
+  g += `<rect x="${(x(b0) - half).toFixed(1)}" y="${m.t}" width="${(x(nA - 1) - x(b0) + 2 * half).toFixed(1)}" height="${H - m.t - m.b}" fill="var(--sunken)" opacity=".6"/>`;
+  g += `<text x="${(x(b0) - half + 6).toFixed(1)}" y="${m.t + 12}">Backtest</text><text x="${(x(nA) - half + 6).toFixed(1)}" y="${m.t + 12}">Forecast</text>`;
+  for (let k = 0; k <= ticks; k++) { const v = top * k / ticks; g += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}" stroke="${k ? 'var(--grid)' : 'var(--axis)'}" stroke-width="1"/><text x="${m.l - 6}" y="${y(v) + 4}" text-anchor="end">${fmtK(v)}</text>`; }
+  const every = W < 520 ? 6 : 3;
+  months.forEach((mo, i) => { if (i % every === 0 && n - 1 - i >= every || i === n - 1) g += `<text x="${x(i)}" y="${H - 6}" text-anchor="${i === n - 1 ? 'end' : 'middle'}">${monLbl(mo)}</text>`; });
+  g += `<path d="${path(s[base], b0)}" fill="none" stroke="var(--s2)" stroke-width="2" stroke-dasharray="5 4" stroke-linejoin="round"/>`;
+  g += `<path d="${path(s.actual, 0)}" fill="none" stroke="var(--fg)" stroke-width="2" stroke-linejoin="round"/>`;
+  g += `<path d="${path(s.gbm, b0)}" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round"/>`;
+  g += `<path d="${path([s.actual[nA - 1]].concat(s.future), nA - 1)}" fill="none" stroke="var(--s1)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/>`;
+  s.future.forEach((v, i) => { g += `<circle cx="${x(nA + i)}" cy="${y(v)}" r="4" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"/>`; });
+  g += `<g id="hov" style="display:none"><line id="hov-l" y1="${m.t}" y2="${H - m.b}" stroke="var(--muted)" stroke-width="1"/><g id="hov-d"></g></g>`;
+  g += `<rect id="hit" x="${m.l}" y="${m.t}" width="${W - m.l - m.r}" height="${H - m.t - m.b}" fill="transparent"/>`;
+  el.innerHTML = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${g}</svg><div class="tip" id="tip" hidden></div>`;
+  const eM = errOf(s.actual, s.gbm), eB = errOf(s.actual, s[base]);
+  document.getElementById('trend-legend').innerHTML = `<span><i class="sw" style="border-color:var(--fg)"></i>Units ordered</span><span><i class="sw" style="border-color:var(--s1)"></i>Model forecast · ${(eM * 100).toFixed(1)}% miss</span><span><i class="sw dash" style="border-color:var(--s2)"></i>${METHOD[base]} (today) · ${(eB * 100).toFixed(1)}% miss</span>`;
+  const svg = el.querySelector('svg'), tip = document.getElementById('tip'), hov = svg.getElementById('hov');
+  const show = ev => {
+    const r = svg.getBoundingClientRect(), px = (ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left;
+    const i = Math.max(0, Math.min(n - 1, Math.round((px - m.l) / (W - m.l - m.r) * (n - 1))));
+    const rows = [];
+    if (i < nA) rows.push(['Ordered', s.actual[i], 'var(--fg)']);
+    if (i >= b0 && i < nA) { rows.push(['Model', s.gbm[i - b0], 'var(--s1)']); rows.push([METHOD[base], s[base][i - b0], 'var(--s2)']); }
+    if (i >= nA) rows.push(['Model forecast', s.future[i - nA], 'var(--s1)']);
+    hov.style.display = ''; svg.getElementById('hov-l').setAttribute('x1', x(i)); svg.getElementById('hov-l').setAttribute('x2', x(i));
+    svg.getElementById('hov-d').innerHTML = rows.map(rw => `<circle cx="${x(i)}" cy="${y(rw[1])}" r="4.5" fill="${rw[2]}" stroke="var(--surface)" stroke-width="2"/>`).join('');
+    tip.innerHTML = `<b>${monLbl(months[i])}${i >= nA ? ' · forecast' : i >= b0 ? ' · backtest' : ''}</b>` + rows.map(rw => `<div><span>${rw[0]}</span><span>${fmtN(rw[1])}</span></div>`).join('');
+    tip.hidden = false;
+    const tw = tip.offsetWidth; let left = x(i) + 12; if (left + tw > W) left = x(i) - tw - 12;
+    tip.style.left = Math.max(0, left) + 'px'; tip.style.top = (m.t + 8) + 'px';
+  };
+  const hide = () => { hov.style.display = 'none'; tip.hidden = true; };
+  const hit = svg.getElementById('hit');
+  hit.addEventListener('mousemove', show); hit.addEventListener('touchstart', show, { passive: true }); hit.addEventListener('touchmove', show, { passive: true });
+  hit.addEventListener('mouseleave', hide);
+}
+function niceMax(v) { const p = Math.pow(10, Math.floor(Math.log10(v || 1))); for (const k of [1, 1.2, 2, 2.4, 4, 6, 8, 10]) if (k * p >= v) return k * p; return 10 * p; }
+let rzT; window.addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(() => { if (ui.view === 'regional') drawRegional(); }, 120); });
+
 /* ---------- actions ---------- */
+/* ---------- Amy's story: the brief's Appendix C, email vs hub ---------- */
+function storyEvents() {
+  const T = TYPICAL, d1 = T['Quality/Regulatory'], d2 = d1 + 2, d3 = d1 + T['BU Head'], d4 = d3 + T['Business Support'], d5 = d4 + T['MDM'];
+  return {
+    email: [
+      [0, 'Amy copies an old request email, changes the product name and sends it to the MDM mailbox. Unsure about regulatory sign-off, she leaves it blank.', ''],
+      [2, 'MDM notices the missing regulatory field and emails Amy.', 'bad'],
+      [7, 'Amy is travelling and replies the following week. The request goes to Quality/Regulatory.', 'bad'],
+      [10, 'Quality/Regulatory notices the email and approves. Forwarded to the BU Head.', ''],
+      [13, 'BU Head approves. Forwarded to Business Support.', ''],
+      [16, 'Business Support approves. Waiting for MDM to key it into SAP B1.', ''],
+      [18, 'Amy tries to raise a sales order. The item still doesn\'t exist in SAP B1. She emails the mailbox to ask what happened.', 'bad'],
+    ],
+    hub: [
+      [0, 'Amy picks Item. Licence number is required, so nothing is left blank, and Quality/Regulatory is on the route automatically. Duplicate check: 2 similar items, different volume.', ''],
+      [0.1, 'Siti gets a Teams card. Amy can see the expected finish date.', ''],
+      [d1, 'Siti checks the licence and approves from Teams.', 'good'],
+      [d2, 'Daniel hasn\'t responded in 48h. Automatic reminder in Teams.', 'warn'],
+      [d3, 'Daniel approves from Teams.', 'good'],
+      [d4, 'Grace (Business Support) approves.', 'good'],
+      [d5, `Priya creates it in SAP B1 from the generated import file. Amy is notified in Teams and raises her sales order.`, 'good'],
+    ],
+    hubDays: d5,
+  };
+}
+function viewStory() {
+  const ev = storyEvents(), day = ui.storyDay == null ? 99 : ui.storyDay;
+  const col = (list, end, label, endText, endCls) => `<div class="panel story-col"><div class="story-h"><b>${label}</b><span class="mono" id="sd-${label === 'By email' ? 'e' : 'h'}">${day >= end ? Math.round(end) + ' days' : 'day ' + Math.floor(day)}</span></div>
+    <div class="story-bar"><i style="width:${Math.min(day, end) / 18 * 100}%" class="${endCls}"></i></div>
+    <ol class="story">${list.map(([d, text, cls]) => `<li class="${cls} ${d <= day ? '' : 'pending'}" data-d="${d}"><span class="mono">Day ${d < 0.5 ? 0 : Math.round(d)}</span><p>${esc(text)}</p></li>`).join('')}</ol>
+    <div class="story-end ${endCls} ${day >= end ? '' : 'pending'}" data-d="${end}">${endText}</div></div>`;
+  return `<div class="head"><div><h2>Amy needs a new item code</h2><p>The same request twice. Left: the email process from the brief's "day in the life". Right: the same request through the hub, timed with each approver's usual response time.</p></div><button class="btn primary" data-act="story-play">${ui.storyTimer ? 'Playing…' : '▶ Play side by side'}</button></div>
+    <div class="story-grid">${col(ev.email, 18, 'By email', 'Day 18: still not in SAP B1', 'bad')}${col(ev.hub, ev.hubDays, 'Lives Request Hub', `Day ${Math.round(ev.hubDays)}: live in SAP B1`, 'good')}</div>
+    <p class="muted" style="margin:0;font-size:12.5px">Email timings are from the brief (days 0, 2, 7 and 18) with the approval steps spread over the gap. Hub timings use the median response per approver shown on every request.</p>`;
+}
+function playStory() {
+  clearInterval(ui.storyTimer); ui.storyDay = 0;
+  const ev = storyEvents();
+  ui.storyTimer = setInterval(() => {
+    ui.storyDay = Math.min(18, ui.storyDay + 0.12);
+    if (ui.view !== 'story') { clearInterval(ui.storyTimer); ui.storyTimer = null; ui.storyDay = null; return; }
+    const d = ui.storyDay;
+    document.querySelectorAll('.story li, .story-end').forEach(li => li.classList.toggle('pending', +li.dataset.d > d));
+    const bars = document.querySelectorAll('.story-bar i');
+    if (bars[0]) bars[0].style.width = Math.min(d, 18) / 18 * 100 + '%';
+    if (bars[1]) bars[1].style.width = Math.min(d, ev.hubDays) / 18 * 100 + '%';
+    const e = document.getElementById('sd-e'), h = document.getElementById('sd-h');
+    if (e) e.textContent = d >= 18 ? '18 days' : 'day ' + Math.floor(d);
+    if (h) h.textContent = d >= ev.hubDays ? Math.round(ev.hubDays) + ' days' : 'day ' + Math.floor(d);
+    if (d >= 18) { clearInterval(ui.storyTimer); ui.storyTimer = null; const btn = document.querySelector('[data-act=story-play]'); if (btn) btn.textContent = '▶ Play again'; }
+  }, 60);
+  render();
+}
 function goto(view) { if (view !== 'detail') ui.from = view; ui.view = view; ui.sel = view === 'detail' ? ui.sel : null; render(); window.scrollTo(0, 0); }
 function open(id) { if (ui.view !== 'detail') ui.from = ui.view; ui.sel = id; ui.view = 'detail'; render(); window.scrollTo(0, 0); }
 function cfgChange(text) { S.config.version++; S.configLog.push({ at: Date.now(), by: ui.persona, text }); }
 function noteOf(id) { const el = document.getElementById('dec-' + id); return el ? el.value.trim() : ''; }
 
-function approve(r) {
-  const c = current(r), note = noteOf(r.id);
-  c.status = 'done'; c.by = ui.persona; c.at = Date.now();
-  if (note) r.messages.push({ by: ui.persona, at: Date.now(), vis: 'int', text: note });
+function approve(r, actor, noteText, via) {
+  const by = actor || ui.persona;
+  const c = current(r), note = noteText != null ? noteText : noteOf(r.id);
+  const tag = via ? ' from Teams' : '';
+  c.status = 'done'; c.by = by; c.at = Date.now();
+  if (note) r.messages.push({ by, at: Date.now(), vis: 'int', text: note });
   const i = r.steps.indexOf(c);
   if (c.role === 'MDM') {
     const pre = SAP_PREFIX[r.domain];
     const nums = S.records.filter(x => x.type === r.domain && /^\w\d+$/.test(x.code)).map(x => +x.code.slice(1));
     r.sapCode = r.domain === 'Cost Center' ? 'CC-' + r.entity + '-' + r.country + '-' + (S.records.length + 1) : pre + (Math.max(10000, ...nums) + 1);
-    S.records.push({ code: r.sapCode, type: r.domain, name: r.fields.name, entity: r.entity, country: r.fields.country || r.country, created: Date.now() });
+    S.records.push({ code: r.sapCode, type: r.domain, name: r.fields.name, entity: r.entity, country: r.fields.country || r.country, taxId: r.fields.taxId || '', created: Date.now() });
     r.state = 'done'; r.closed = Date.now();
-    audit(r, 'Created in SAP B1 as ' + r.sapCode);
+    audit(r, 'Created in SAP B1 as ' + r.sapCode + tag + '. Service Layer payload generated', by);
     r.messages.push({ by: 'system', at: Date.now(), vis: 'int', text: `${person(r.requester).name} notified in Teams: ${r.fields.name} is live in SAP B1 as ${r.sapCode}.` });
     if (r.party) r.messages.push({ by: 'system', at: Date.now(), vis: 'ext', text: 'Your details are approved and set up with Lives Group.' });
     const conv = S.requests.find(x => x.linked === r.id);
     if (conv) { conv.messages.push({ by: 'system', at: Date.now(), vis: 'int', text: `Customer setup complete (${r.sapCode}). The order can now be entered in SAP B1.` }); conv.cls.knownCode = r.sapCode; audit(conv, 'Linked customer created as ' + r.sapCode, 'system'); }
-    toast('Created in SAP B1 as ' + r.sapCode);
+    toast('Created in SAP B1 as ' + r.sapCode + '. Import file ready');
   } else {
     const next = r.steps[i + 1]; next.status = 'current'; next.since = Date.now();
-    audit(r, 'Approved ' + c.role + ' step' + (note ? ': "' + note + '"' : ''));
+    audit(r, 'Approved ' + c.role + ' step' + tag + (note ? ': "' + note + '"' : ''), by);
     const h = holderOf(next.role);
     r.messages.push({ by: 'system', at: Date.now(), vis: 'int', text: `${h ? h.name : next.role} notified in Teams: request is now with ${next.role}.` });
     toast('Approved. Sent to ' + (h ? h.name : next.role));
   }
+  ui.teams = r.id;
+}
+
+/* ---------- Teams notification (simulated) ----------
+   In production: a Power Automate flow posts an adaptive card to the approver in Teams; Approve / Ask for info
+   call back into the hub. Here the card acts as the person it was sent to. */
+function teamsTarget(r) {
+  if (!r || r.kind !== 'mdm') return null;
+  if (r.state === 'open' && current(r)) { const c = current(r); return { p: holderOf(c.role), mode: c.role === 'MDM' ? 'create' : 'approve', role: c.role }; }
+  if (r.state === 'info') return { p: person(r.requester), mode: 'info' };
+  if (r.state === 'done') return { p: person(r.requester), mode: 'done' };
+  return null;
+}
+function renderTeams() {
+  const el = document.getElementById('teams'); if (!el) return;
+  const r = ui.teams && req(ui.teams), t = teamsTarget(r);
+  if (!t || !t.p || isExt()) { el.hidden = true; el.innerHTML = ''; return; }
+  const e = eta(r), wc = S.requests.find(x => x.linked === r.id && x.kind === 'conv' && x.cls.kind === 'po' && !x.cls.knownCode);
+  const facts = [['Requested by', person(r.requester).name + ' · ' + r.entity + ' · ' + (COUNTRIES[r.country] || r.country)]];
+  r.defs.filter(f => !f.sensitive && f.k !== 'name' && r.fields[f.k]).slice(0, 3).forEach(f => facts.push([f.label, f.type === 'country' ? COUNTRIES[r.fields[f.k]] : r.fields[f.k]]));
+  if (e) facts.push(['Expected in SAP B1', fmtDay(e.at)]);
+  const restricted = r.defs.some(f => f.sensitive && r.fields[f.k]);
+  const title = { approve: `Approval needed: ${r.domain.toLowerCase()} setup (${t.role})`, create: 'Ready for you to create in SAP B1', info: `${person(r.returnedBy).name} needs more information`, done: `Live in SAP B1 as ${r.sapCode}` }[t.mode];
+  el.innerHTML = `<div class="t-top"><span class="t-logo" aria-hidden="true">T</span><b>Teams</b><span class="t-meta">Lives Request Hub · now</span><button class="t-x" data-act="tclose" aria-label="Dismiss">✕</button></div>
+  <div class="t-body">
+    <div class="t-to">To ${esc(t.p.name)}${t.role ? ' · ' + esc(t.role) : ''}</div>
+    <b class="t-title">${esc(title)}</b>
+    <div class="t-name">${esc(r.fields.name)} <span class="mono muted">${esc(r.id)}</span></div>
+    ${t.mode === 'approve' || t.mode === 'create' ? `<dl class="t-facts">${facts.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
+      ${wc ? `<div class="t-alert">${sgdShort(poValue(wc.cls))} of customer orders waiting on this</div>` : ''}
+      ${restricted ? '<div class="t-note">Bank and credit details stay in the hub (restricted fields are never sent to Teams).</div>' : ''}
+      <textarea id="t-note" rows="2" placeholder="Comment (needed to ask for info)"></textarea>
+      <div class="t-acts"><button class="btn primary small" data-act="tapprove">${t.mode === 'create' ? 'Create in SAP B1' : 'Approve'}</button><button class="btn small" data-act="tinfo">Ask for info</button><button class="btn small" data-act="topen">Open in hub</button></div>`
+    : t.mode === 'info' ? `<p class="t-text">Your request is waiting on you. Reply in the hub and it goes straight back to ${esc(current(r).role)}.</p><div class="t-acts"><button class="btn primary small" data-act="topen">Open in hub</button></div>`
+    : `<p class="t-text">Done in ${dur(r.closed - r.created)}. You can raise sales orders now.</p><div class="t-acts"><button class="btn small" data-act="topen">Open in hub</button></div>`}
+  </div>`;
+  el.hidden = false;
 }
 
 document.addEventListener('click', e => {
@@ -800,6 +1451,31 @@ document.addEventListener('click', e => {
   if (b.tagName === 'INPUT' && b.type === 'checkbox') return; // handled on change
   switch (act) {
     case 'nav': goto(b.dataset.view); break;
+    case 'tclose': ui.teams = null; renderTeams(); break;
+    case 'tapprove': { const tr = req(ui.teams), t = teamsTarget(tr); if (!t) break; const n = document.getElementById('t-note'); approve(tr, t.p.id, n ? n.value.trim() : '', true); render(); break; }
+    case 'tinfo': {
+      const tr = req(ui.teams), t = teamsTarget(tr), n = document.getElementById('t-note'), note = n ? n.value.trim() : '';
+      if (!note) { n.focus(); n.placeholder = 'Say what you need from ' + person(tr.requester).name; break; }
+      tr.state = 'info'; tr.returnedBy = t.p.id; tr.returnedAt = Date.now();
+      audit(tr, 'Returned for information at ' + t.role + ' step from Teams: "' + note + '"', t.p.id);
+      tr.messages.push({ by: t.p.id, at: Date.now(), vis: 'int', text: note });
+      render(); toast('Returned to ' + person(tr.requester).name); break;
+    }
+    case 'topen': { const tr = req(ui.teams), t = teamsTarget(tr); if (!t) break; ui.persona = t.p.id; ui.teams = null; ui.from = 'work'; open(tr.id); break; }
+    case 'dl-json': case 'dl-csv': {
+      const pl = sapPayload(r), json = act === 'dl-json';
+      download(json ? JSON.stringify(pl, null, 2) : payloadCsv(pl), `${r.sapCode}_${pl.object}.${json ? 'json' : 'csv'}`, json ? 'application/json' : 'text/csv');
+      audit(r, 'Downloaded SAP B1 ' + (json ? 'Service Layer JSON' : 'DTW CSV') + ' import file'); render(); break;
+    }
+    case 'intake': ui.intake = !ui.intake; render(); break;
+    case 'intake-ex': { ui.intakeText = INTAKE_EXAMPLES[+b.dataset.i].text; render(); break; }
+    case 'intake-read': {
+      const ta = document.getElementById('intake-text'); const text = ta.value.trim(); if (!text) { ta.focus(); break; }
+      ui.intakeText = text; ui.intakeBusy = true; render();
+      setTimeout(() => { ui.intakeBusy = false; applyIntake(extractEmail(text)); }, 900); break;
+    }
+    case 'story-play': playStory(); break;
+    case 'wi-reset': ui.wi = null; render(); break;
     case 'open': open(b.dataset.id); break;
     case 'reset': S = seed(); ui.draft = null; ui.revealed = {}; ui.view = 'work'; ui.sel = null; render(); toast('Demo data restored'); break;
     case 'filter': ui.filter = b.dataset.f; render(); break;
@@ -831,22 +1507,22 @@ document.addEventListener('click', e => {
       const c = current(r); r.state = 'open'; c.since = Date.now();
       audit(r, 'Resubmitted' + (changed.length ? '. Changed: ' + changed.join(', ') : ''));
       r.messages.push({ by: 'system', at: Date.now(), vis: 'int', text: `${(holderOf(c.role) || {}).name || c.role} notified in Teams: request is back with ${c.role}.` });
-      render(); toast('Resubmitted to ' + c.role); break;
+      ui.teams = r.id; render(); toast('Resubmitted to ' + c.role); break;
     }
-    case 'nudge': { const w = waitingOn(r); audit(r, 'Sent a reminder to ' + (w.who ? w.who.name : w.role)); r.messages.push({ by: 'system', at: Date.now(), vis: 'int', text: `${me().name} sent a reminder to ${w.who ? w.who.name : w.role} in Teams.` }); render(); toast('Reminder sent'); break; }
+    case 'nudge': { const w = waitingOn(r); audit(r, 'Sent a reminder to ' + (w.who ? w.who.name : w.role)); r.messages.push({ by: 'system', at: Date.now(), vis: 'int', text: `${me().name} sent a reminder to ${w.who ? w.who.name : w.role} in Teams.` }); ui.teams = r.id; render(); toast('Reminder sent'); break; }
     case 'submit': {
       const d = ui.draft, cfg = S.config.domains[d.domain];
       const id = 'MDM-' + (S.seq++);
       const fields = Object.assign({}, d.fields); if (d.dupOk && d.dupNote.trim()) fields.dupNote = d.dupNote.trim();
       const steps = cfg.chain.concat(['MDM']).map((role, i) => ({ role, status: i ? 'todo' : 'current', by: null, at: null, since: i ? null : Date.now() }));
-      const dups = similar(fields.name, d.domain);
+      const dups = similar(fields.name, d.domain, null, fields.taxId);
       const nr = { id, kind: 'mdm', domain: d.domain, entity: d.entity, country: d.country, requester: ui.persona, created: Date.now(), defs: snapshotDefs(S.config, d.domain), fields, steps, state: 'open', party: d.party || null, messages: [], audit: [] };
       if (d.note.trim()) nr.messages.push({ by: ui.persona, at: Date.now(), vis: 'int', text: d.note.trim() });
       const h = holderOf(steps[0].role);
       nr.messages.push({ by: 'system', at: Date.now(), vis: 'int', text: `${h ? h.name : steps[0].role} notified in Teams: new ${d.domain.toLowerCase()} request waiting for ${steps[0].role} approval.` });
       audit(nr, 'Submitted. Duplicate check: ' + (dups.length ? dups.length + ' similar record(s) shown' + (fields.dupNote ? ', overridden with reason' : '') : 'no similar records'));
       if (d.fromConv) { const conv = req(d.fromConv); conv.linked = id; audit(conv, 'Customer setup started: ' + id); conv.messages.push({ by: 'system', at: Date.now(), vis: 'int', text: `Customer setup ${id} started by ${me().name}.` }); }
-      S.requests.unshift(nr); ui.draft = null; ui.from = 'work'; open(id); toast('Submitted. ' + (h ? h.name : steps[0].role) + ' has been notified'); break;
+      S.requests.unshift(nr); ui.draft = null; ui.from = 'work'; ui.teams = id; open(id); toast('Submitted. ' + (h ? h.name : steps[0].role) + ' has been notified'); break;
     }
     case 'setup': {
       const p = person(r.party);
@@ -866,6 +1542,8 @@ document.addEventListener('click', e => {
       S.requests.unshift(c); ui.from = 'work'; open(id); toast('Sent. Lives Group has been notified'); break;
     }
     case 'ruledom': ui.ruleDomain = b.dataset.d; render(); break;
+    case 'rsel': { const y0 = window.scrollY; ui.rsel = b.dataset.k; render(); window.scrollTo(0, y0); break; }
+    case 'dropmode': { const y0 = window.scrollY; ui.dropMode = b.dataset.m; render(); window.scrollTo(0, y0); break; }
     case 'fdel': { const dom = S.config.domains[ui.ruleDomain], f = dom.fields[+b.dataset.i]; dom.fields.splice(+b.dataset.i, 1); cfgChange(`Removed "${f.label}" from ${ui.ruleDomain}`); render(); toast('Field removed'); break; }
     case 'fadd': {
       const el = document.getElementById('newfield'), label = el.value.trim(); if (!label) { el.focus(); return; }
@@ -901,6 +1579,8 @@ document.addEventListener('input', e => {
   if (t.dataset.field || t.dataset.meta) onDraftInput(t);
   else if (t.id === 'dup-note') { ui.draft.dupNote = t.value; const keep = t.selectionStart; updateNewSide(); const n = document.getElementById('dup-note'); n.focus(); n.setSelectionRange(keep, keep); }
   else if (t.id === 'x-subject' || t.id === 'x-text') updateSendPreview();
+  else if (t.dataset.wi) { ui.wi = Object.assign({}, ui.wi || WI_DEFAULT, { [t.dataset.wi]: +t.value }); updateWhatIf(); }
+  else if (t.id === 'intake-text') ui.intakeText = t.value;
   else if (t.id === 'mq') { ui.mq = t.value; const pos = t.selectionStart; render(); const n = document.getElementById('mq'); n.focus(); n.setSelectionRange(pos, pos); }
 });
 

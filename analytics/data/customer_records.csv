@@ -1,0 +1,199 @@
+code,name,country,entity,segment,tax_id
+C10012,National University Hospital,SG,SPD,hospital,223461923D
+C10145,Chiang Mai Medical Laboratory,TH,SPD,lab,0105337926063
+C10230,Klang Valley Pathology Lab,MY,QTG,lab,201801141754
+C10311,Manila Central Clinical Lab,PH,SPD,lab,736-114-579-000
+C10402,Hanoi Biomedical Centre,VN,SPD,lab,0390164844
+C10233,Penang Specialist Hospital,MY,SPD,hospital,201001766906
+C10505,Singapore Community Hospital,SG,SPD,hospital,212147924E
+C10512,Woodlands Regional Pathology Lab,SG,SPD,lab,218183320K
+C10518,Woodlands Medical Health Centre,SG,SPD,clinic,226663348E
+C10526,Jurong Riverside Medical Centre,SG,SPD,hospital,203680447Z
+C10532,Bukit Timah Sunrise Laboratory,SG,SPD,lab,212192743J
+C10537,Woodlands Women's & Children's Polyclinic,SG,SPD,clinic,210588518H
+C10543,Jurong Central Medical Centre,SG,SPD,hospital,218440626C
+C10546,Tampines Community Pathology Lab,SG,SPD,lab,210186143Z
+C10550,Changi Regional Laboratory,SG,SPD,lab,224339128K
+C10554,Tampines Women's & Children's Diagnostics,SG,SPD,lab,216661409B
+C10561,Changi Mercy Medical Centre,SG,SPD,hospital,226304229G
+C10569,Jurong Regional Diagnostics,SG,SPD,lab,206843894H
+C10577,Bukit Timah Women's & Children's Diagnostics,SG,SPD,lab,201370919J
+C10581,Novena Eastern Hospital,SG,SPD,hospital,222740390H
+C10585,Singapore Eastern Hospital,SG,SPD,hospital,211298858M
+C10589,Novena Cancer Diagnostics,SG,SPD,lab,226598666M
+C10595,Changi Cancer Diagnostics,SG,SPD,lab,208722308E
+C10600,Tampines Women's & Children's Pathology Lab,SG,SPD,lab,206716650M
+C10606,Singapore Eastern Pathology Lab,SG,SPD,lab,224484277G
+C10613,Outram General Laboratory,SG,SPD,lab,223984493S
+C10618,Outram United Pathology Lab,SG,SPD,lab,219459438W
+C10626,Jurong Mercy Hospital,SG,SPD,hospital,215110275D
+C10633,Tampines Regional Medical Centre,SG,SPD,hospital,199231569B
+C10638,Novena Cancer Medical Centre,SG,SPD,hospital,208418940R
+C10646,Bukit Timah Riverside Health Centre,SG,SPD,clinic,204020606W
+C10654,Tampines Medical Laboratory,SG,QTS,lab,224358800A
+C10658,Singapore United Medical Centre,SG,SPD,hospital,198232184K
+C10661,Singapore Heart Laboratory,SG,SPD,lab,201777557G
+C10666,Outram Community Medical Centre,SG,SPD,hospital,226581978M
+C10674,Johor Bahru Cancer Diagnostics,MY,SPD,lab,200001165808
+C10682,Klang Medical Clinic,MY,SPD,clinic,201301829965
+C10688,Ipoh Community Clinic,MY,SPD,clinic,201401076238
+C10692,Shah Alam Mercy Pathology Lab,MY,SPD,lab,200101333897
+C10695,Kuching Pacific Diagnostics,MY,SPD,lab,200401892868
+C10702,Klang Women's & Children's Laboratory,MY,QTG,lab,201401226166
+C10710,Penang Community Medical Centre,MY,SPD,hospital,200501601581
+C10716,Melaka United Laboratory,MY,SPD,lab,201101992699
+C10719,Ipoh Eastern Medical Centre,MY,SPD,hospital,200801315768
+C10722,Penang General Hospital,MY,SPD,hospital,201301576261
+C10728,Johor Bahru Central Pathology Lab,MY,QTS,lab,200801063488
+C10733,Melaka Mercy Pathology Lab,MY,SPD,lab,200501004613
+C10736,Shah Alam United Hospital,MY,SPD,hospital,201301647077
+C10741,Penang Pacific Laboratory,MY,SPD,lab,200601540846
+C10748,Klang Riverside Pathology Lab,MY,SPD,lab,201001905098
+C10752,Johor Bahru Mercy Laboratory,MY,SPD,lab,201301833589
+C10760,Kuching Eastern Pathology Lab,MY,SPD,lab,200001547832
+C10766,Kuching Eastern Medical Centre,MY,SPD,hospital,202201985966
+C10771,Klang Specialist Laboratory,MY,SPD,lab,202001425852
+C10774,Klang Central Clinic,MY,SPD,clinic,200801824648
+C10778,Ipoh Specialist Pathology Lab,MY,SPD,lab,202201177718
+C10784,Penang United Clinic,MY,SPD,clinic,201701279633
+C10787,Kuching Eastern Hospital,MY,SPD,hospital,201501041567
+C10791,Penang Women's & Children's Clinic,MY,SPD,clinic,201101091555
+C10796,Shah Alam Cancer Clinic,MY,SPD,clinic,200201287018
+C10801,Johor Bahru Sunrise Hospital,MY,SPD,hospital,201001117186
+C10804,Ipoh Riverside Medical Centre,MY,SPD,hospital,200401256404
+C10808,Kuching Women's & Children's Hospital,MY,SPD,hospital,200101494601
+C10816,Johor Bahru Cancer Medical Centre,MY,SPD,hospital,200701424407
+C10824,Ipoh Specialist Health Centre,MY,QTS,clinic,200901601657
+C10828,Penang Pacific Medical Centre,MY,SPD,hospital,201401970286
+C10836,Klang Eastern Laboratory,MY,SPD,lab,200701212319
+C10842,Kuching United Health Centre,MY,SPD,clinic,200201000746
+C10848,Kuching Specialist Laboratory,MY,SPD,lab,202301288199
+C10854,Hat Yai Medical Medical Centre,TH,SPD,hospital,0105178645904
+C10860,Nonthaburi Cancer Diagnostics,TH,QTG,lab,0105938156467
+C10864,Phuket Mercy Diagnostics,TH,SPD,lab,0105266015117
+C10871,Pattaya Regional Medical Centre,TH,SPD,hospital,0105707697475
+C10878,Bangkok Central Pathology Lab,TH,SPD,lab,0105529903920
+C10881,Nonthaburi Sunrise Polyclinic,TH,SPD,clinic,0105476148075
+C10889,Udon Thani Mercy Hospital,TH,SPD,hospital,0105127237543
+C10893,Khon Kaen Cancer Hospital,TH,SPD,hospital,0105294443011
+C10897,Nonthaburi General Laboratory,TH,SPD,lab,0105934269112
+C10903,Phuket Mercy Hospital,TH,SPD,hospital,0105844128704
+C10908,Chiang Mai Women's & Children's Medical Centre,TH,SPD,hospital,0105987203508
+C10913,Pattaya Heart Pathology Lab,TH,QTS,lab,0105607940901
+C10921,Hat Yai Cancer Hospital,TH,SPD,hospital,0105629391244
+C10924,Khon Kaen Mercy Diagnostics,TH,SPD,lab,0105880433157
+C10930,Udon Thani Pacific Medical Centre,TH,SPD,hospital,0105689584763
+C10934,Hat Yai Regional Diagnostics,TH,QTS,lab,0105061336188
+C10939,Nonthaburi Regional Diagnostics,TH,SPD,lab,0105036316916
+C10947,Bangkok Riverside Health Centre,TH,SPD,clinic,0105778852261
+C10950,Hat Yai Medical Diagnostics,TH,SPD,lab,0105016567313
+C10953,Khon Kaen Specialist Pathology Lab,TH,SPD,lab,0105306287113
+C10956,Hat Yai Riverside Hospital,TH,SPD,hospital,0105512266492
+C10962,Bangkok Mercy Hospital,TH,SPD,hospital,0105483297770
+C10970,Bangkok Regional Laboratory,TH,SPD,lab,0105721572352
+C10978,Phuket Cancer Clinic,TH,SPD,clinic,0105781044519
+C10985,Chiang Mai Women's & Children's Diagnostics,TH,SPD,lab,0105260896102
+C10991,Udon Thani Central Pathology Lab,TH,SPD,lab,0105068659381
+C10997,Pattaya Mercy Hospital,TH,SPD,hospital,0105591445201
+C11005,Bangkok Riverside Medical Centre,TH,SPD,hospital,0105210043693
+C11011,Bangkok Women's & Children's Diagnostics,TH,SPD,lab,0105559708924
+C11015,Hat Yai Specialist Medical Centre,TH,QTS,hospital,0105221833148
+C11019,Phuket Sunrise Pathology Lab,TH,SPD,lab,0105395195395
+C11027,Nonthaburi Eastern Hospital,TH,SPD,hospital,0105052440175
+C11035,Udon Thani Sunrise Clinic,TH,SPD,clinic,0105934491455
+C11040,Hue Sunrise Laboratory,VN,QTS,lab,0326923717
+C11045,Da Nang Mercy Laboratory,VN,SPD,lab,0386911332
+C11048,Nha Trang Heart Laboratory,VN,SPD,lab,0318699020
+C11055,Saigon Heart Medical Centre,VN,SPD,hospital,0312264473
+C11058,Hai Phong Regional Pathology Lab,VN,SPD,lab,0395663273
+C11062,Hai Phong Medical Laboratory,VN,SPD,lab,0369279403
+C11067,Can Tho Regional Pathology Lab,VN,SPD,lab,0300846498
+C11075,Da Nang Medical Medical Centre,VN,SPD,hospital,0348205214
+C11083,Hai Phong Mercy Diagnostics,VN,SPD,lab,0358676215
+C11089,Hanoi Regional Medical Centre,VN,SPD,hospital,0383687205
+C11097,Saigon Specialist Hospital,VN,SPD,hospital,0373477500
+C11104,Da Nang Regional Health Centre,VN,SPD,clinic,0390806802
+C11108,Hanoi Sunrise Diagnostics,VN,QTS,lab,0372253794
+C11115,Saigon Mercy Diagnostics,VN,SPD,lab,0317827275
+C11120,Nha Trang Mercy Hospital,VN,SPD,hospital,0386291737
+C11125,Can Tho Eastern Pathology Lab,VN,SPD,lab,0318056461
+C11133,Bien Hoa Women's & Children's Health Centre,VN,SPD,clinic,0323547165
+C11141,Hai Phong Mercy Polyclinic,VN,SPD,clinic,0377614287
+C11148,Saigon Community Hospital,VN,SPD,hospital,0327722713
+C11152,Nha Trang Heart Diagnostics,VN,SPD,lab,0323862651
+C11155,Can Tho Sunrise Medical Centre,VN,SPD,hospital,0320431225
+C11160,Saigon Specialist Diagnostics,VN,SPD,lab,0393778052
+C11164,Saigon Community Medical Centre,VN,SPD,hospital,0362416735
+C11170,Da Nang United Laboratory,VN,SPD,lab,0325294222
+C11177,Saigon Medical Laboratory,VN,SPD,lab,0306255385
+C11182,Hai Phong Riverside Polyclinic,VN,SPD,clinic,0388519244
+C11190,Hai Phong Specialist Clinic,VN,SPD,clinic,0351285154
+C11193,Bien Hoa Regional Hospital,VN,SPD,hospital,0378442068
+C11201,Hai Phong Heart Clinic,VN,SPD,clinic,0395240765
+C11206,Saigon Mercy Hospital,VN,SPD,hospital,0325942108
+C11209,Nha Trang Community Hospital,VN,SPD,hospital,0377472676
+C11212,Bien Hoa Heart Laboratory,VN,SPD,lab,0375699723
+C11216,Hai Phong United Diagnostics,VN,SPD,lab,0330389252
+C11219,Quezon City Cancer Polyclinic,PH,SPD,clinic,955-149-585-000
+C11225,Manila Regional Clinic,PH,SPD,clinic,544-597-696-000
+C11232,Manila Community Laboratory,PH,SPD,lab,926-887-723-000
+C11238,Makati Pacific Medical Centre,PH,SPD,hospital,627-293-119-000
+C11242,Pasig Central Diagnostics,PH,SPD,lab,790-851-132-000
+C11245,Pasig General Diagnostics,PH,SPD,lab,307-949-529-000
+C11252,Cebu United Pathology Lab,PH,SPD,lab,595-863-208-000
+C11256,Davao Sunrise Medical Centre,PH,SPD,hospital,994-380-380-000
+C11263,Manila Mercy Polyclinic,PH,SPD,clinic,594-019-856-000
+C11270,Makati General Pathology Lab,PH,SPD,lab,624-675-306-000
+C11276,Pasig Specialist Diagnostics,PH,SPD,lab,699-690-948-000
+C11282,Manila Women's & Children's Medical Centre,PH,SPD,hospital,168-659-959-000
+C11286,Pasig United Health Centre,PH,SPD,clinic,784-803-768-000
+C11294,Iloilo General Hospital,PH,SPD,hospital,116-448-419-000
+C11297,Iloilo Community Health Centre,PH,SPD,clinic,711-688-692-000
+C11300,Manila Mercy Hospital,PH,SPD,hospital,857-758-039-000
+C11304,Pasig Sunrise Hospital,PH,SPD,hospital,239-188-323-000
+C11311,Cebu Women's & Children's Diagnostics,PH,SPD,lab,227-505-452-000
+C11316,Quezon City Pacific Laboratory,PH,SPD,lab,466-328-302-000
+C11323,Baguio Medical Hospital,PH,SPD,hospital,572-076-482-000
+C11329,Pasig Community Hospital,PH,SPD,hospital,887-878-830-000
+C11333,Davao Specialist Health Centre,PH,SPD,clinic,198-069-851-000
+C11336,Davao United Diagnostics,PH,SPD,lab,338-985-430-000
+C11340,Pasig Eastern Polyclinic,PH,SPD,clinic,389-898-111-000
+C11346,Iloilo Pacific Hospital,PH,QTS,hospital,597-637-591-000
+C11350,Manila Heart Polyclinic,PH,SPD,clinic,656-953-471-000
+C11357,Davao Women's & Children's Hospital,PH,SPD,hospital,712-686-754-000
+C11362,Cebu Regional Medical Centre,PH,SPD,hospital,491-543-756-000
+C11370,Baguio Medical Pathology Lab,PH,SPD,lab,791-262-295-000
+C11377,Baguio Pacific Hospital,PH,SPD,hospital,724-160-452-000
+C11385,Baguio Central Polyclinic,PH,SPD,clinic,348-051-070-000
+C11389,Cebu Regional Hospital,PH,SPD,hospital,382-778-088-000
+C11397,Baguio Specialist Laboratory,PH,SPD,lab,395-093-115-000
+C20001,OUTRAM COMMUNITY MED CENTRE,SG,QTG,hospital,
+C20006,"CHIANG MAI WOMEN'S & CHILDREN'S MED CTR CO., LTD.",TH,QTS,hospital,0105987203508
+C20011,"Bangkok Regional Lab Co., Ltd.",TH,QTG,lab,
+C20016,Da Nang United Lab,VN,QTS,lab,0325294222
+C20019,Hue Sunrise Laboratory JSC,VN,QTG,lab,
+C20022,Kuching United Health Ctr Sdn Bhd,MY,QTS,clinic,200201000746
+C20026,Saigon Heart Medical Ctr JSC,VN,QTS,hospital,0312264473
+C20029,"Hat Yai Spec Med Centre Co., Ltd.",TH,QTG,hospital,
+C20033,"BANGKOK WOMEN'S & CHILDREN'S DIAGNOSTICS CO., LTD.",TH,QTG,lab,
+C20038,Pasig Spec Diagnostics Inc.,PH,QTG,lab,699-690-948-000
+C20042,Davao Women's & Children's Hospital Inc.,PH,QTS,hospital,712-686-754-000
+C20047,Jurong Central Med Centre,SG,QTS,hospital,
+C20049,Baguio Spec Lab,PH,QTS,lab,
+C20052,Bien Hoa Regional Hosp JSC,VN,QTS,hospital,0378442068
+C20054,Nha Trang Heart Diagnostics JSC,VN,QTS,lab,0323862651
+C20056,Penang Women's & Children's Clinic Sdn Bhd,MY,QTS,clinic,201101091555
+C20060,"HAT YAI MED DIAG CO., LTD.",TH,QTG,lab,0105016567313
+C20062,Johor Bahru Mercy Lab,MY,QTS,lab,201301833589
+C20067,BUKIT TIMAH WOMEN'S & CHILDREN'S DIAG,SG,QTS,lab,
+C20071,CEBU REGIONAL HOSP INC.,PH,QTS,hospital,
+C20073,"Chiang Mai Medical Lab Co., Ltd.",TH,SPD,lab,
+C20075,KUCHING EASTERN PATHOLOGY LAB SDN BHD,MY,SPD,lab,
+C20077,IPOH SPEC PATHOLOGY LAB SDN BHD,MY,SPD,lab,
+C20079,Hanoi Regional Medical Ctr JSC,VN,SPD,hospital,
+C20082,Manila Women's & Children's Med Ctr,PH,SPD,hospital,168-659-959-000
+C20087,Tampines Community Pathology Lab Pte Ltd,SG,SPD,lab,
+C20090,Hai Phong Regional Pathology Lab JSC,VN,SPD,lab,0395663273
+C20093,"BANGKOK RIVERSIDE HEALTH CTR CO., LTD.",TH,SPD,clinic,
+C20097,Da Nang Regional Health Ctr JSC,VN,SPD,clinic,
+C20099,NUH,SG,QTS,hospital,223461923D
