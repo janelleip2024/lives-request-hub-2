@@ -206,6 +206,23 @@ th { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: upp
 .teams .btn.primary { background: var(--tm); border-color: var(--tm); color: #fff; }
 /* SAP B1 handoff */
 pre.code { margin: 0; padding: 10px 12px; background: var(--sunken); border-radius: 6px; font-family: var(--font-mono); font-size: 12px; line-height: 1.45; overflow-x: auto; white-space: pre; }
+/* Start-here tour for first-time visitors */
+.tour-dlg { border: 1px solid var(--line); border-radius: 12px; padding: 0; width: min(560px, calc(100% - 32px)); background: var(--surface); color: var(--fg); box-shadow: 0 20px 50px rgba(0,0,0,.25); }
+.tour-dlg::backdrop { background: rgba(10,20,16,.45); }
+.tour-in { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.tour-in p { margin: 0; color: var(--muted); }
+.tour-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.tour-steps button { width: 100%; text-align: left; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 2px 10px; align-items: start; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; cursor: pointer; }
+.tour-steps button:hover { border-color: var(--accent); }
+.tour-n { grid-row: span 2; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--accent-fg); display: grid; place-items: center; font-weight: 700; font-size: 12px; margin-top: 1px; }
+.tour-steps b { font-size: 14px; }
+.tour-steps span:last-child { font-size: 12.5px; color: var(--muted); }
+.tour-foot { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; font-size: 12.5px; }
+.tour-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; background: var(--accent-soft); border: 1px solid var(--accent); border-radius: var(--r); padding: 10px 14px; }
+.tour-bar .tb-text { flex: 1 1 320px; min-width: 0; }
+.tour-bar .tb-text b { display: block; }
+.tour-bar .tb-text span { font-size: 13px; }
+.tour-bar .tb-acts { display: flex; gap: 6px; flex-wrap: wrap; }
 /* Email intake */
 .intake { border-color: var(--ext); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -317,12 +334,14 @@ details.method ul { margin: 8px 0 0; padding-left: 18px; display: flex; flex-dir
   <header class="top">
     <div class="brand"><div class="mark" aria-hidden="true">LG</div><div><b>Lives Request Hub</b><span>Master data &amp; customer requests · prototype with demo data</span></div></div>
     <div class="as"><label for="persona">Viewing as</label><select id="persona"></select></div>
+    <button class="btn small primary" data-act="tour-open">Start here</button>
     <button class="btn small" data-act="reset" title="Restore the demo data">Reset demo</button>
   </header>
   <nav class="rail" id="rail" aria-label="Views"></nav>
   <main id="main" aria-live="polite"></main>
 </div>
 <div class="toast" id="toast" hidden></div>
+<dialog class="tour-dlg" id="tour" aria-labelledby="tour-h"></dialog>
 <aside class="teams" id="teams" aria-live="polite" aria-label="Teams notification (simulated)" hidden></aside>
 
 <script>
@@ -649,6 +668,7 @@ function render() {
   else if (v === 'regional') { $main.innerHTML = viewRegional(); drawRegional(); }
   else if (v === 'story') $main.innerHTML = viewStory();
   else $main.innerHTML = viewWork();
+  if (ui.tour != null && !isExt()) $main.insertAdjacentHTML('afterbegin', tourBar());
   renderTeams();
   save();
 }
@@ -1375,6 +1395,38 @@ function playStory() {
   }, 60);
   render();
 }
+/* ---------- Start-here tour ----------
+   For judges who open the live link without the video: each step switches persona and opens the right screen. */
+const TOUR = [
+  { title: "Amy's request: 18 days by email vs 6 in the hub", hint: 'The "day in the life" from the brief, played side by side. It starts playing on its own.', persona: 'amy', view: 'story' },
+  { title: 'Fill a request from an email and catch a duplicate', hint: 'Click "Fill the form". The fields fill themselves from the email, then the tax-ID check finds this customer already exists, with its order history.', persona: 'marcus', view: 'new', intake: 0 },
+  { title: 'See who is holding a request up, then approve in Teams', hint: 'Daniel is past his usual response time. Click Approve on the Teams card (bottom right) and the next approver gets theirs.', persona: 'amy', open: 'MDM-1041', teams: true },
+  { title: 'Turn a customer order into an account setup', hint: 'This message was auto-tagged as a purchase order from a lab that is not in SAP B1 yet. Click "Start customer setup".', persona: 'marcus', open: 'MSG-208' },
+  { title: 'See how an approved record lands in SAP B1', hint: 'Scroll to "SAP B1 handoff": the exact SAP B1 Service Layer request, with the approval trail. Download it as JSON or CSV.', persona: 'priya', open: 'MDM-1036' },
+  { title: 'Regional view: Products A, B and C across 5 countries', hint: 'Click a red cell for its forecast vs the 6-month average. In the drop-off call list, switch Before cleanup to After cleanup. End on the Business case sliders.', persona: 'marcus', view: 'regional' },
+];
+function tourDialogHtml() {
+  return `<div class="tour-in"><div><h2 id="tour-h">Start here: 6 things to try in 3 minutes</h2><p style="margin-top:6px">This prototype runs on simulated demo data. Each step switches to the right person and opens the right screen. You can reopen this list any time with Start here.</p></div>
+    <ol class="tour-steps">${TOUR.map((t, i) => `<li><button data-act="tour-go" data-i="${i}"><span class="tour-n">${i + 1}</span><b>${esc(t.title)}</b><span>${esc(t.hint)}</span></button></li>`).join('')}</ol>
+    <div class="tour-foot"><span class="muted">Clicked around already? <button class="btn small" data-act="tour-reset">Reset demo data</button></span><button class="btn" data-act="tour-close">Explore on my own</button></div></div>`;
+}
+function tourBar() {
+  const i = ui.tour, t = TOUR[i];
+  return `<div class="tour-bar" role="region" aria-label="Guided tour"><div class="tb-text"><b>Step ${i + 1} of ${TOUR.length}: ${esc(t.title)}</b><span>${esc(t.hint)}</span></div>
+    <div class="tb-acts">${i > 0 ? '<button class="btn small" data-act="tour-step" data-d="-1">Back</button>' : ''}${i < TOUR.length - 1 ? '<button class="btn small primary" data-act="tour-step" data-d="1">Next step</button>' : '<button class="btn small primary" data-act="tour-end">Finish</button>'}<button class="btn small" data-act="tour-open">All steps</button><button class="btn small" data-act="tour-end" aria-label="Close tour">✕</button></div></div>`;
+}
+function tourMarkSeen() { try { localStorage.setItem(KEY + '-tour', '1'); } catch (e) {} }
+function tourOpen() { const d = document.getElementById('tour'); d.innerHTML = tourDialogHtml(); if (!d.open) d.showModal(); }
+function tourClose() { const d = document.getElementById('tour'); if (d.open) d.close(); tourMarkSeen(); }
+function tourGo(i) {
+  const t = TOUR[i]; tourClose();
+  ui.tour = i; ui.persona = t.persona; ui.teams = null; ui.intake = false; ui.from = 'work';
+  if (t.view === 'new') { ui.draft = newDraft('Customer'); ui.intake = true; ui.intakeText = INTAKE_EXAMPLES[t.intake].text; }
+  if (t.view === 'regional') { ui.dropMode = 'before'; ui.rsel = null; }
+  if (t.open && req(t.open)) { if (t.teams && teamsTarget(req(t.open))) ui.teams = t.open; ui.view = 'detail'; ui.sel = t.open; render(); window.scrollTo(0, 0); }
+  else goto(t.view || 'work');
+  if (t.view === 'story') playStory();
+}
 function goto(view) { if (view !== 'detail') ui.from = view; ui.view = view; ui.sel = view === 'detail' ? ui.sel : null; render(); window.scrollTo(0, 0); }
 function open(id) { if (ui.view !== 'detail') ui.from = ui.view; ui.sel = id; ui.view = 'detail'; render(); window.scrollTo(0, 0); }
 function cfgChange(text) { S.config.version++; S.configLog.push({ at: Date.now(), by: ui.persona, text }); }
@@ -1475,6 +1527,12 @@ document.addEventListener('click', e => {
       setTimeout(() => { ui.intakeBusy = false; applyIntake(extractEmail(text)); }, 900); break;
     }
     case 'story-play': playStory(); break;
+    case 'tour-open': tourOpen(); break;
+    case 'tour-close': tourClose(); break;
+    case 'tour-go': tourGo(+b.dataset.i); break;
+    case 'tour-step': tourGo(ui.tour + +b.dataset.d); break;
+    case 'tour-end': ui.tour = null; tourMarkSeen(); render(); break;
+    case 'tour-reset': S = seed(); ui.draft = null; ui.revealed = {}; ui.teams = null; tourOpen(); toast('Demo data restored'); break;
     case 'wi-reset': ui.wi = null; render(); break;
     case 'open': open(b.dataset.id); break;
     case 'reset': S = seed(); ui.draft = null; ui.revealed = {}; ui.view = 'work'; ui.sel = null; render(); toast('Demo data restored'); break;
@@ -1585,5 +1643,9 @@ document.addEventListener('input', e => {
 });
 
 render();
+document.getElementById('tour').addEventListener('close', tourMarkSeen);
+let tourSeen = false;
+try { tourSeen = !!localStorage.getItem(KEY + '-tour'); } catch (e) {}
+if (!tourSeen) tourOpen();
 })();
 </script>
